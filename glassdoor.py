@@ -19,7 +19,7 @@ def glassdoor_search(action='employers', page=1):
               'action': action,
               'pn': page}
     url = url + \
-        't.p={}&t.k={}&userip={}&useragent={}&format=json&v={}&action={}&pn={}'.format(
+        't.p={}&t.k={}&userip={}&useragent={}&format=json&v={}&action={}&pn={}&ps=50'.format(
             params['t.p'],
             params['t.k'],
             params['userip'],
