@@ -4,7 +4,7 @@
 The goal here is to gather data on employers, analyze employee satisfaction, and identify trends and factors that correlate with high employee satisfaction. This would be an NLP/PCA/NMF problem.
 
 Possible source(s):
-- Glassdoor API (does not allow bots? I will scrape you!)
+- Glassdoor API - needing to use urllib2 instead of requests
 - Scraping "Top Companies . . ." articles
 
 ### *Project 2: Restaurant Trends*
