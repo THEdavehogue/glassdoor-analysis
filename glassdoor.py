@@ -30,11 +30,17 @@ def glassdoor_search(action='employers', page=1):
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     content = urlopen(req)
     data = json.loads(content.read())
-    return data
+    return url, data
+
+
+def find_five_stars(db_table):
+    c = db_table.find({'overallRating': 5.0})
+    names = [next(c)['name'] for i in range(c.count())]
+    return names
 
 
 if __name__ == '__main__':
-    r = glassdoor_search()
+    url, r = glassdoor_search()
     num_pages = r['response']['totalNumberOfPages']
 
     db_client = MongoClient()
@@ -42,7 +48,14 @@ if __name__ == '__main__':
     emp_table = db['employers']
 
     for i in xrange(num_pages):
-        page = glassdoor_search('employers', i + 1)
-        print 'Page {}:'.format(i + 1), len(page['response']['employers'])
-        for employer in page['response']['employers']:
-            emp_table.insert_one(employer)
+        url, page = glassdoor_search('employers', i + 1)
+        counter = 0
+        while (not page['success']) and counter < 5:
+            url, page = glassdoor_search('employers', i + 1)
+            counter += 1
+        else:
+            print 'Page {}:'.format(i + 1), len(page['response']['employers'])
+            for employer in page['response']['employers']:
+                emp_table.insert_one(employer)
+
+    five_star_names = find_five_stars()
