@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
-from urllib2 import Request, urlopen
+from time import sleep
 import socket
 import requests
 from pymongo import MongoClient
@@ -19,7 +19,7 @@ def glassdoor_search(action='employers', page=1):
               'action': action,
               'pn': page}
     url = url + \
-        't.p={}&t.k={}&userip={}&useragent={}&format=json&v={}&action={}&pn={}&ps=50'.format(
+        't.p={}&t.k={}&userip={}&useragent={}&format=json&v={}&action={}&pn={}'.format(
             params['t.p'],
             params['t.k'],
             params['userip'],
@@ -27,15 +27,19 @@ def glassdoor_search(action='employers', page=1):
             params['v'],
             params['action'],
             params['pn'])
-    req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-    # need to add try/except here . . . should eliminate the need for error
-    # handling on lines 60-63
-    content = urlopen(req)
-    # if content.code != 200:
-    #     print 'Error {}: {}, Skipping page {}'.format(content.code, content.msg, page)
-    #     page += 1
-    #     data = glassdoor_search(action, page)
-    # else:
+    response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+    if response.status_code == 403:
+        print '403 Error: {}'.format(response.reason)
+        print '30 Second timeout . . .'
+        sleep(30)
+        data = glassdoor_search(action, page)
+    elif response.status_code == 200:
+        data = json.loads(response.text)
+        return data
+    else:
+        print 'Page {}:'.format(page)
+        print 'Code {}: {}'.format(response.status_code, response.reason)
+        return
     data = json.loads(content.read())
     return data
 
@@ -49,6 +53,7 @@ def find_five_stars(db_table):
 if __name__ == '__main__':
     init_search = glassdoor_search()
     num_pages = init_search['response']['totalNumberOfPages']
+    print 'Iterating through {} pages.'.format(num_pages)
 
     db_client = MongoClient()
     db = db_client['glassdoor']
@@ -56,13 +61,11 @@ if __name__ == '__main__':
 
     for i in xrange(num_pages):
         page = glassdoor_search('employers', i + 1)
-        counter = 0
-        # while (not page['success']) and counter < 5:
-        #     page = glassdoor_search('employers', i + 1)
-        #     counter += 1
-        # else:
-        print 'Page {}:'.format(i + 1), len(page['response']['employers'])
-        for employer in page['response']['employers']:
-            emp_table.insert_one(employer)
+        if not page:
+            print 'Skipped page, see above.'
+        else:
+            emp_table.insert_many(page['response']['employers'])
+        if (i + 1) % 100 == 0:
+            print 'Loaded {} pages, {} records . . .'.format(i + 1, emp_table.count())
 
     five_star_names = find_five_stars(emp_table)
