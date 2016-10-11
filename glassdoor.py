@@ -28,13 +28,15 @@ def glassdoor_search(action='employers', page=1):
             params['action'],
             params['pn'])
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    # need to add try/except here . . . should eliminate the need for error
+    # handling on lines 60-63
     content = urlopen(req)
-    if content.code != 200:
-        print 'Error {}: {}, Skipping page {}'.format(content.code, content.msg, page)
-        page += 1
-        data = glassdoor_search(action, page)
-    else:
-        data = json.loads(content.read())
+    # if content.code != 200:
+    #     print 'Error {}: {}, Skipping page {}'.format(content.code, content.msg, page)
+    #     page += 1
+    #     data = glassdoor_search(action, page)
+    # else:
+    data = json.loads(content.read())
     return data
 
 
@@ -55,12 +57,12 @@ if __name__ == '__main__':
     for i in xrange(num_pages):
         page = glassdoor_search('employers', i + 1)
         counter = 0
-        while (not page['success']) and counter < 5:
-            page = glassdoor_search('employers', i + 1)
-            counter += 1
-        else:
-            print 'Page {}:'.format(i + 1), len(page['response']['employers'])
-            for employer in page['response']['employers']:
-                emp_table.insert_one(employer)
+        # while (not page['success']) and counter < 5:
+        #     page = glassdoor_search('employers', i + 1)
+        #     counter += 1
+        # else:
+        print 'Page {}:'.format(i + 1), len(page['response']['employers'])
+        for employer in page['response']['employers']:
+            emp_table.insert_one(employer)
 
     five_star_names = find_five_stars(emp_table)
