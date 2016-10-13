@@ -10,6 +10,15 @@ import json
 
 # glassdoor API documentation = https://www.glassdoor.com/developer/index.htm
 def glassdoor_search(action='employers', page=1):
+    '''
+    Function to populate MongoDB with data from Glassdoor API. Currently optimized
+    for use in the Employers API, but will be adding functionality to download
+    reviews soon.
+    INPUT: Action - str, section of API to search. Page - int, page of results.
+
+    OUTPUT: JSON object with employer data (includes overall rating etc.)
+    '''
+
     url = 'http://api.glassdoor.com/api/api.htm?'
     params = {'v': '1',
               't.p': os.environ['glassdoor_id'],
@@ -45,6 +54,14 @@ def glassdoor_search(action='employers', page=1):
 
 
 def find_five_stars(db_table):
+    '''
+    Short function to populate a list of 5.0 star rated employers from the
+    employers table.
+
+    INPUT: db_table: PyMongo table object.
+
+    OUTPUT: List of company names that are 5 star employers.
+    '''
     c = db_table.find({'overallRating': 5.0})
     names = [next(c)['name'] for i in range(c.count())]
     return names
