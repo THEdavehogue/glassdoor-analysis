@@ -37,19 +37,13 @@ def glassdoor_search(action='employers', page=1):
             params['action'],
             params['pn'])
     response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
-    if response.status_code == 403:
-        print '403 Error: {}'.format(response.reason)
+    if response.status_code != 200
+        print 'Error {}: {}'.format(response.status_code, response.reason)
         print '30 Second timeout . . .'
         sleep(30)
         data = glassdoor_search(action, page)
-    elif response.status_code == 200:
-        data = json.loads(response.text)
-        return data
     else:
-        print 'Page {}:'.format(page)
-        print 'Code {}: {}'.format(response.status_code, response.reason)
-        return
-    data = json.loads(content.read())
+        data = json.loads(response.text)
     return data
 
 
