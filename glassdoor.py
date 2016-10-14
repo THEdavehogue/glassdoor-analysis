@@ -63,14 +63,14 @@ def find_five_stars(db_table):
     OUTPUT: List of company names that are 5 star employers.
     '''
     c = db_table.find({'overallRating': 5.0})
-    names = [next(c)['name'] for i in range(c.count())]
+    names = {next(c)['name']: next(c)['overallRating']
+             for i in range(c.count())}
     return names
 
 
 if __name__ == '__main__':
     init_search = glassdoor_search()
     num_pages = init_search['response']['totalNumberOfPages']
-    print 'Iterating through {} pages.'.format(num_pages)
 
     db_client = MongoClient()
     db = db_client['glassdoor']
@@ -82,7 +82,7 @@ if __name__ == '__main__':
             print 'Skipped page, see above.'
         else:
             emp_table.insert_many(page['response']['employers'])
-        if (i + 1) % 100 == 0:
-            print 'Loaded {} pages, {} records . . .'.format(i + 1, emp_table.count())
+        if (i + 1) % 25 == 0:
+            print 'Loaded {} of {} pages, {} records . . .'.format(i + 1, num_pages, emp_table.count())
 
-    five_star_names = find_five_stars(emp_table)
+    five_star_dict = find_five_stars(emp_table)
