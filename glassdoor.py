@@ -37,7 +37,7 @@ def glassdoor_search(action='employers', page=1):
             params['action'],
             params['pn'])
     response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
-    if response.status_code != 200
+    if response.status_code != 200:
         print 'Error {}: {}'.format(response.status_code, response.reason)
         print '30 Second timeout . . .'
         sleep(30)
