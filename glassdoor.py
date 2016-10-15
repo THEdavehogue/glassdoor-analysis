@@ -72,8 +72,10 @@ if __name__ == '__main__':
 
     for i in xrange(num_pages):
         page = glassdoor_search('employers', i + 1)
-        if not page:
-            print 'Skipped page, see above.'
+        counter = 1
+        while not page['success'] and counter < 5:
+            page = glassdoor_search('employers', i + 1)
+            counter += 1
         else:
             emp_table.insert_many(page['response']['employers'])
         if (i + 1) % 25 == 0:
