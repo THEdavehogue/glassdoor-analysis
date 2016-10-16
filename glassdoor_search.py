@@ -57,6 +57,7 @@ def find_five_stars(db_table):
     OUTPUT: List of company names that are 5 star employers.
     '''
     c = db_table.find({'overallRating': '5.0'})
+    names = set([next(c)['name'] for i in xrange(c.count())])
     return names
 
 
@@ -79,4 +80,4 @@ if __name__ == '__main__':
         if (i + 1) % 25 == 0:
             print 'Loaded {} of {} pages, {} records . . .'.format(i + 1, num_pages, emp_table.count())
 
-    five_star_dict = find_five_stars(emp_table)
+    five_star_set = find_five_stars(emp_table)
