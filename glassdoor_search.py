@@ -56,9 +56,7 @@ def find_five_stars(db_table):
 
     OUTPUT: List of company names that are 5 star employers.
     '''
-    c = db_table.find({'overallRating': 5.0})
-    names = {next(c)['name']: next(c)['overallRating']
-             for i in range(c.count())}
+    c = db_table.find({'overallRating': '5.0'})
     return names
 
 
