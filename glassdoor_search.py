@@ -47,20 +47,6 @@ def glassdoor_search(action='employers', page=1):
     return data
 
 
-def find_five_stars(db_table):
-    '''
-    Short function to populate a list of 5.0 star rated employers from the
-    employers table.
-
-    INPUT: db_table: PyMongo table object.
-
-    OUTPUT: List of company names that are 5 star employers.
-    '''
-    c = db_table.find({'overallRating': '5.0'})
-    names = set([next(c)['name'] for i in xrange(c.count())])
-    return names
-
-
 if __name__ == '__main__':
     init_search = glassdoor_search()
     num_pages = init_search['response']['totalNumberOfPages']
@@ -79,5 +65,3 @@ if __name__ == '__main__':
             emp_table.insert_many(page['response']['employers'])
         if (i + 1) % 25 == 0:
             print 'Loaded {} of {} pages, {} records . . .'.format(i + 1, num_pages, emp_table.count())
-
-    five_star_set = find_five_stars(emp_table)
