@@ -13,9 +13,9 @@ def find_five_stars(db_table):
 
     OUTPUT: Set of company names that are 5 star employers.
     '''
-    c = db_table.find({'$and': [{'overallRating': '5.0'},
+    c = db_table.find({'$and': [{'overallRating': {'$in': ['4.5', '4.6', '4.7', '4.8', '4.9', '5.0']}},
                                 {'numberOfRatings': {'$exists': True}},
-                                {'numberOfRatings': {'$gt': 1}}]})
+                                {'numberOfRatings': {'$gt': 50}}]})
     names = set([next(c)['name'] for i in xrange(c.count())])
     return names
 
