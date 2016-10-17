@@ -13,7 +13,9 @@ def find_five_stars(db_table):
 
     OUTPUT: Set of company names that are 5 star employers.
     '''
-    c = db_table.find({'overallRating': '5.0'})
+    c = db_table.find({'$and': [{'overallRating': '5.0'},
+                                {'numberOfRatings': {'$exists': True}},
+                                {'numberOfRatings': {'$gt': 1}}]})
     names = set([next(c)['name'] for i in xrange(c.count())])
     return names
 
@@ -27,13 +29,16 @@ def key_info_dict(db_table, er_names):
     OUTPUT: Dictionary containing employer names and key data points.
     '''
     info_dict = {}
+    i = 1
     for employer in er_names:
+        print 'Employer {} of {}: {}'.format(i, len(er_names), employer.encode('ascii', 'ignore'))
         c = db_table.find({'name': employer})
         record = next(c)
         info_dict[record['name']] = {'num_ratings': record.get('numberOfRatings', None),
                                      'feature': record.get('featuredReview', None),
                                      'industry': record.get('industryName', None),
                                      'website': record.get('website', None)}
+        i += 1
     return info_dict
 
 
