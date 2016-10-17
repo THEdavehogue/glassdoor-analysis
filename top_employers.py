@@ -48,5 +48,5 @@ if __name__ == '__main__':
     db = db_client['glassdoor']
     emp_table = db['employers']
 
-    five_stars = find_five_stars(emp_table)
-    top_employers = key_info_dict(emp_table, five_stars)
+    names = find_five_stars(emp_table)
+    top_employers = key_info_dict(emp_table, names)
