@@ -1,10 +1,11 @@
 # Dave Hogue - Project Proposals:
 ***
 ### *Project 1: Employer Trends*
-The goal here is to gather data on employers, analyze employee satisfaction, and identify trends and factors that correlate with high employee satisfaction. This would be an NLP/PCA/NMF problem.
+The goal of this project is to gather data on employers, analyze employee satisfaction, and identify trends and factors that correlate with high employee satisfaction. This would be an NLP/PCA/NMF problem.
 
 Possible source(s):
-- Glassdoor API - Will need to crawl/scrape actual ratings (pros & cons . . . separate corpora)
+- Glassdoor API
+- Will need to crawl/scrape actual ratings (pros & cons . . . separate corpora)
 - Scraping "Top Companies . . ." articles
 
 ### *Project 2: Restaurant Trends*

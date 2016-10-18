@@ -1,10 +1,11 @@
-import os
 import numpy as np
 import pandas as pd
+import json
 from pymongo import MongoClient
+from bs4 import BeautifulSoup
 
 
-def find_five_stars(db_table):
+def top_employers(db_table):
     '''
     Short function to populate a list of 5.0 star rated employers from the
     employers table.
@@ -13,16 +14,16 @@ def find_five_stars(db_table):
 
     OUTPUT: Set of company names that are 5 star employers.
     '''
-    c = db_table.find({'$and': [{'overallRating': {'$in': ['4.5', '4.6', '4.7', '4.8', '4.9', '5.0']}},
+    c = db_table.find({'$and': [{'overallRating': {'$in': ['4.0', '4.1', '4.2', '4.3', '4.4', '4.5', '4.6', '4.7', '4.8', '4.9', '5.0']}},
                                 {'numberOfRatings': {'$exists': True}},
-                                {'numberOfRatings': {'$gt': 50}}]})
+                                {'numberOfRatings': {'$gt': 499}}]})
     names = set([next(c)['name'] for i in xrange(c.count())])
     return names
 
 
 def key_info_dict(db_table, er_names):
     '''
-    Grab key info for 5.0 star rated employers.
+    Grab key info for 4.0 or greater rated employers.
 
     INPUT: db_table: PyMongo table object, er_names: iterable of employer names.
 
@@ -42,11 +43,25 @@ def key_info_dict(db_table, er_names):
     return info_dict
 
 
+def scrape_ratings(er_names):
+    '''
+    Scrape ratings for target companies. Insert text from 'Pros' into pros table.
+    Insert text from 'Cons' into cons table.
+
+    INPUT: Iterable of employer names.
+
+    OUTPUT: (Pros, Cons) both JSON objects
+    '''
+    pass
+
+
 if __name__ == '__main__':
 
     db_client = MongoClient()
     db = db_client['glassdoor']
     emp_table = db['employers']
 
-    names = find_five_stars(emp_table)
+    names = top_employers(emp_table)
     top_employers = key_info_dict(emp_table, names)
+    num_ratings = pd.Series([top_employers[i]['num_ratings']
+                             for i in top_employers])
