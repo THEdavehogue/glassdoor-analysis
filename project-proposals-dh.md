@@ -9,6 +9,13 @@ Possible source(s):
 - Possibly look at company reviews and predict approximate rating if feasible
 - Scraping "Top Companies . . ." articles to compare?
 
+#####Notes:
+- Use lemmatizer
+- Possible Neural Net - attention / recurrent
+- Look at Keras datasets (IMDB, Yelp?)
+- Handling Unicode?
+
+
 ### *Project 2: Restaurant Trends*
 Similar to project 1, the idea is to identify trends in highly rated restaurants, looking for spikes in mentions of food items in reviews or common menu items across popular restaurants (e.g. the rise of brussels sprouts, bacon, and kale in the last few years). This would also be an NLP/PCA/NMF problem.
 
