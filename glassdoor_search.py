@@ -1,5 +1,4 @@
 import os
-import numpy as np
 import pandas as pd
 from time import sleep
 import socket
@@ -47,6 +46,40 @@ def glassdoor_search(action='employers', page=1):
     return data
 
 
+def mongo_to_pandas(db_table):
+    df = pd.DataFrame(columns=['company_id',
+                               'company_name',
+                               'num_ratings',
+                               'overall_rating',
+                               'recommend_pct',
+                               'culture_rating',
+                               'comp_rating',
+                               'opportunity_rating',
+                               'leader_rating',
+                               'work_life_rating',
+                               'industry'])
+    c = db_table.find()
+    i = 0
+    for rec in c:
+        i += 1
+        print 'Row {} of {}'.format(i, c.count())
+        row = pd.Series({'company_id': rec.get('id', None),
+                         'company_name': rec.get('name', None),
+                         'num_ratings': rec.get('numberOfRatings', None),
+                         'overall_rating': rec.get('overallRating', None),
+                         'recommend_pct': rec.get('recommendToFriendRating', None),
+                         'culture_rating': rec.get('cultureAndValuesRating', None),
+                         'comp_rating': rec.get('compensationAndBenefitsRating', None),
+                         'opportunity_rating': rec.get('careerOpportunitiesRating', None),
+                         'leader_rating': rec.get('seniorLeadershipRating', None),
+                         'work_life_rating': rec.get('workLifeBalanceRating', None),
+                         'industry': rec.get('industryName', None)})
+        df = df.append(row, ignore_index=True)
+    df['company_id'] = df['company_id'].astype(int)
+    df['num_ratings'] = df['num_ratings'].astype(int)
+    return df
+
+
 if __name__ == '__main__':
     init_search = glassdoor_search()
     num_pages = init_search['response']['totalNumberOfPages']
@@ -65,3 +98,6 @@ if __name__ == '__main__':
             emp_table.insert_many(page['response']['employers'])
         if (i + 1) % 25 == 0:
             print 'Loaded {} of {} pages, {} records . . .'.format(i + 1, num_pages, emp_table.count())
+
+    employers_df = mongo_to_pandas(emp_table)
+    employers_df.to_pickle('employers.pkl')
