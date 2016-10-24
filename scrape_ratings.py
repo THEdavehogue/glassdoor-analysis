@@ -71,6 +71,7 @@ def scrape_ratings(driver, er_ids, pro_or_con):
                                  'company_name': name,
                                  'review_text': pros})
                 corpus = corpus.append(row, ignore_index=True)
+    return corpus
 
 
 if __name__ == '__main__':
