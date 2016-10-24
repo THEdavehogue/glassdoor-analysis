@@ -3,3 +3,4 @@
 .ipynb_checkpoints
 resume.md
 *.pkl
+*.log
