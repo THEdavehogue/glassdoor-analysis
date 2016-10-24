@@ -70,6 +70,7 @@ def scrape_ratings(driver, er_ids, pro_or_con):
                 row = pd.Series({'company_id': c_id,
                                  'company_name': name,
                                  'review_text': pros})
+                corpus = corpus.append(row, ignore_index=True)
 
 
 if __name__ == '__main__':
