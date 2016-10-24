@@ -46,7 +46,7 @@ def glassdoor_search(action='employers', page=1):
     return data
 
 
-def mongo_to_pandas(db_table):
+def empty_df():
     df = pd.DataFrame(columns=['company_id',
                                'company_name',
                                'num_ratings',
@@ -58,23 +58,38 @@ def mongo_to_pandas(db_table):
                                'leader_rating',
                                'work_life_rating',
                                'industry'])
+    return df
+
+
+def parse_record(rec):
+    row = pd.Series({'company_id': rec.get('id', None),
+                     'company_name': rec.get('name', None),
+                     'num_ratings': rec.get('numberOfRatings', None),
+                     'overall_rating': rec.get('overallRating', None),
+                     'recommend_pct': rec.get('recommendToFriendRating', None),
+                     'culture_rating': rec.get('cultureAndValuesRating', None),
+                     'comp_rating': rec.get('compensationAndBenefitsRating', None),
+                     'opportunity_rating': rec.get('careerOpportunitiesRating', None),
+                     'leader_rating': rec.get('seniorLeadershipRating', None),
+                     'work_life_rating': rec.get('workLifeBalanceRating', None),
+                     'industry': rec.get('industryName', None)})
+    return row
+
+
+def mongo_to_pandas(db_table):
+    df = empty_df()
+    df_2 = empty_df()
     c = db_table.find()
+    lst = list(c)
     i = 0
-    for rec in c:
+    for rec in lst:
         i += 1
-        print 'Row {} of {}'.format(i, c.count())
-        row = pd.Series({'company_id': rec.get('id', None),
-                         'company_name': rec.get('name', None),
-                         'num_ratings': rec.get('numberOfRatings', None),
-                         'overall_rating': rec.get('overallRating', None),
-                         'recommend_pct': rec.get('recommendToFriendRating', None),
-                         'culture_rating': rec.get('cultureAndValuesRating', None),
-                         'comp_rating': rec.get('compensationAndBenefitsRating', None),
-                         'opportunity_rating': rec.get('careerOpportunitiesRating', None),
-                         'leader_rating': rec.get('seniorLeadershipRating', None),
-                         'work_life_rating': rec.get('workLifeBalanceRating', None),
-                         'industry': rec.get('industryName', None)})
-        df = df.append(row, ignore_index=True)
+        if i % 25000 == 0:
+            df = df.append(df_2)
+            df_2 = empty_df()
+        print 'Row {} of {}'.format(i, len(lst))
+        row = parse_record(rec)
+        df_2 = df_2.append(row, ignore_index=True)
     df['company_id'] = df['company_id'].astype(int)
     df['num_ratings'] = df['num_ratings'].astype(int)
     return df
