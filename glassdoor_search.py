@@ -84,7 +84,7 @@ def mongo_to_pandas(db_table):
     i = 0
     for rec in lst:
         i += 1
-        if i % 25000 == 0:
+        if i % 2500 == 0:
             df = df.append(df_2)
             df_2 = empty_df()
         print 'Row {} of {}'.format(i, len(lst))
