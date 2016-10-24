@@ -20,8 +20,8 @@ def glassdoor_search(action='employers', page=1):
 
     url = 'http://api.glassdoor.com/api/api.htm?'
     params = {'v': '1',
-              't.p': os.environ['glassdoor_id'],
-              't.k': os.environ['glassdoor_key'],
+              't.p': os.environ['GLASSDOOR_ID'],
+              't.k': os.environ['GLASSDOOR_KEY'],
               'userip': socket.gethostbyname(socket.gethostname()),
               'useragent': 'Mozilla/5.0',
               'action': action,
