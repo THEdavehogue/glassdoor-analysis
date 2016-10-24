@@ -47,6 +47,13 @@ def glassdoor_search(action='employers', page=1):
 
 
 def empty_df():
+    '''
+    Function to create an empty pandas DataFrame object (used in mongo_to_pandas)
+
+    INPUT: None
+
+    OUTPUT: empty pandas DataFrame object
+    '''
     df = pd.DataFrame(columns=['company_id',
                                'company_name',
                                'num_ratings',
@@ -77,6 +84,13 @@ def parse_record(rec):
 
 
 def mongo_to_pandas(db_table):
+    '''
+    Function to pull key information from a mongo table into a pandas DataFrame
+
+    INPUT: pymongo collection object
+
+    OUTPUT: pandas DataFrame object
+    '''
     df = empty_df()
     df_2 = empty_df()
     c = db_table.find()
