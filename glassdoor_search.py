@@ -103,24 +103,24 @@ def mongo_to_pandas(db_table):
 
 
 if __name__ == '__main__':
-    # init_search = glassdoor_search()
-    # num_pages = init_search['response']['totalNumberOfPages']
+    init_search = glassdoor_search()
+    num_pages = init_search['response']['totalNumberOfPages']
 
     db_client = MongoClient()
     db = db_client['glassdoor']
     emp_table = db['employers']
 
-    # for i in xrange(num_pages):
-    #     page = glassdoor_search('employers', i + 1)
-    #     counter = 1
-    #     while not page['success'] and counter < 5:
-    #         page = glassdoor_search('employers', i + 1)
-    #         counter += 1
-    #     else:
-    #         emp_table.insert_many(page['response']['employers'])
-    #     if (i + 1) % 25 == 0:
-    # print 'Loaded {} of {} pages, {} records . . .'.format(i + 1, num_pages,
-    # emp_table.count())
+    for i in xrange(num_pages):
+        page = glassdoor_search('employers', i + 1)
+        counter = 1
+        while not page['success'] and counter < 5:
+            page = glassdoor_search('employers', i + 1)
+            counter += 1
+        else:
+            emp_table.insert_many(page['response']['employers'])
+        if (i + 1) % 25 == 0:
+    print 'Loaded {} of {} pages, {} records . . .'.format(i + 1, num_pages,
+                                                           emp_table.count())
 
     employers_df = mongo_to_pandas(emp_table)
     employers_df.to_pickle('employers.pkl')
