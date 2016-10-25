@@ -15,7 +15,7 @@ def scrub_employers(df):
     '''
     mask = df['num_ratings'] >= 100
     df = df[mask]
-    plot_hist(df['overall_rating'], 'Companies with at least 100 Reviews')
+    plot_hist(df['overall_rating'], 'Employers with at least 100 Reviews')
     low_cutoff = round(df['overall_rating'].quantile(0.05), 1)
     hi_cutoff = round(df['overall_rating'].quantile(0.95), 1)
     low_rating_mask = df['overall_rating'] <= low_cutoff
