@@ -23,7 +23,7 @@ def scrub_employers(df):
     selected_ers = df[low_rating_mask | hi_rating_mask]
     middle_ers = df[~low_rating_mask & ~hi_rating_mask]
     plot_segmented_hist(df['overall_rating'], selected_ers['overall_rating'])
-    return df
+    return selected_ers
 
 
 def plot_hist(arr, title):
