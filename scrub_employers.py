@@ -37,11 +37,11 @@ def plot_hist(arr, title):
 
     OUTPUT: Histogram plot (saved in directory)
     '''
-    fig = plt.figure(figsize=(8, 6))
+    fig = plt.figure(figsize=(6, 4))
     ax = fig.add_subplot(111)
-    ax.set_title(title)
-    ax.set_xlabel('Score')
-    ax.set_ylabel('Observations')
+    ax.set_title(title, fontsize=14)
+    ax.set_xlabel('Score', fontsize=10)
+    ax.set_ylabel('Observations', fontsize=10)
     ax.hist(arr, bins=(len(arr) / 180))
     plt.tight_layout()
     plt.savefig('images/{}.png'.format(title.replace(' ', '_').lower()))
@@ -61,14 +61,14 @@ def plot_segmented_hist(arr_middle, arr_tails):
     OUTPUT: Histogram plot (saved in directory)
     '''
 
-    fig = plt.figure(figsize=(8, 6))
+    fig = plt.figure(figsize=(6, 4))
     ax = fig.add_subplot(111)
-    ax.set_title('Employers with Significant Scores')
-    ax.set_xlabel('Score')
-    ax.set_ylabel('Observations')
+    ax.set_title('Employers with Significant Scores', fontsize=14)
+    ax.set_xlabel('Score', fontsize=10)
+    ax.set_ylabel('Observations', fontsize=10)
     ax.hist(arr_middle, bins=34, label='Middle 90%')
     ax.hist(arr_tails, bins=34, label='Outer 5% Tails')
-    plt.legend(loc='best')
+    plt.legend(loc='best', fontsize=10)
     plt.tight_layout()
     plt.savefig('images/sig_scores.png')
 

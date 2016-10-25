@@ -9,6 +9,6 @@ In order to choose which employers to focus on for this analysis, I utilized Gla
 
 ![](images/overall_rating_of_companies_with_100+_reviews.png)
 
-Since the goal of this project is to identify trends in what makes an employer good or bad to work for, I chose to focus even further on companies with a score either below the 5th percentile or above the 95th percentile.
+Since the goal of this project is to identify trends in what makes an employer especially great (or not so great), I chose to focus even further on companies with a score either below the 5th percentile or above the 95th percentile.
 
 ![](images/sig_scores.png)
