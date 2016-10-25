@@ -15,8 +15,7 @@ def scrub_employers(df):
     '''
     mask = df['num_ratings'] >= 100
     df = df[mask]
-    plot_hist(df['overall_rating'],
-              'Overall Rating of Companies with 100+ Reviews')
+    plot_hist(df['overall_rating'], 'Companies with at least 100 Reviews')
     low_cutoff = round(df['overall_rating'].quantile(0.05), 1)
     hi_cutoff = round(df['overall_rating'].quantile(0.95), 1)
     low_rating_mask = df['overall_rating'] <= low_cutoff
@@ -40,7 +39,7 @@ def plot_hist(arr, title):
     fig = plt.figure(figsize=(6, 4))
     ax = fig.add_subplot(111)
     ax.set_title(title, fontsize=14)
-    ax.set_xlabel('Score', fontsize=10)
+    ax.set_xlabel('Overall Score', fontsize=10)
     ax.set_ylabel('Observations', fontsize=10)
     ax.hist(arr, bins=(len(arr) / 180))
     plt.tight_layout()
@@ -64,7 +63,7 @@ def plot_segmented_hist(arr_middle, arr_tails):
     fig = plt.figure(figsize=(6, 4))
     ax = fig.add_subplot(111)
     ax.set_title('Employers with Significant Scores', fontsize=14)
-    ax.set_xlabel('Score', fontsize=10)
+    ax.set_xlabel('Overall Score', fontsize=10)
     ax.set_ylabel('Observations', fontsize=10)
     ax.hist(arr_middle, bins=34, label='Middle 90%')
     ax.hist(arr_tails, bins=34, label='Outer 5% Tails')
