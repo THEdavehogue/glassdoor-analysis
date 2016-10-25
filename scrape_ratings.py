@@ -1,5 +1,6 @@
 import os
 import requests
+import numpy as np
 import pandas as pd
 from time import sleep
 from selenium import webdriver
@@ -31,6 +32,7 @@ def glassdoor_login():
 
 def get_soup(driver, url):
     driver.get(url)
+    sleep(np.random.randint(5, 11))
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
     return soup
@@ -77,8 +79,11 @@ def scrape_ratings(driver, er_ids, pro_or_con):
 if __name__ == '__main__':
     clean_df = pd.read_pickle('clean_employers.pkl')
     clean_df['company_id'] = clean_df['company_id'].astype(int)
-    good_ers = clean_df[clean_df['overall_rating'] >= 4.0]
-    bad_ers = clean_df[clean_df['overall_rating'] <= 2.0]
+    clean_df['num_ratings'] = clean_df['num_ratings'].astype(int)
+    good_ers = clean_df[clean_df['overall_rating']
+                        >= clean_df['overall_rating'].mean()]
+    bad_ers = clean_df[clean_df['overall_rating']
+                       <= clean_df['overall_rating'].mean()]
     good_er_ids = zip(good_ers['company_name'], good_ers['company_id'])
     bad_er_ids = zip(bad_ers['company_name'], bad_ers['company_id'])
     driver = glassdoor_login()
