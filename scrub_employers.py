@@ -1,10 +1,13 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+plt.style.use('fivethirtyeight')
 
 
 def scrub_employers(df):
     '''
-    Function to filter out analytically useless employer records from original collection.
+    Function to refine the original collection of employers to the ones I will
+    analyze later.
 
     INPUT: df: Pandas DataFrame object.
 
@@ -12,14 +15,62 @@ def scrub_employers(df):
     '''
     mask = df['num_ratings'] >= 100
     df = df[mask]
-    low_rating_mask = df['overall_rating'] <= 2.0
-    low_rated_ers = df[low_rating_mask]
-    hi_rating_mask = df['overall_rating'] >= 4.0
-    hi_rated_ers = df[hi_rating_mask]
-    hi_recommend = hi_rated_ers['recommend_pct'] >= 80.0
-    hi_rated_ers = hi_rated_ers[hi_recommend]
-    df = low_rated_ers.append(hi_rated_ers)
+    plot_hist(df['overall_rating'],
+              'Overall Rating of Companies with 100+ Reviews')
+    low_cutoff = round(df['overall_rating'].quantile(0.05), 1)
+    hi_cutoff = round(df['overall_rating'].quantile(0.95), 1)
+    low_rating_mask = df['overall_rating'] <= low_cutoff
+    hi_rating_mask = df['overall_rating'] >= hi_cutoff
+    selected_ers = df[low_rating_mask | hi_rating_mask]
+    middle_ers = df[~low_rating_mask & ~hi_rating_mask]
+    plot_segmented_hist(df['overall_rating'], selected_ers['overall_rating'])
     return df
+
+
+def plot_hist(arr, title):
+    '''
+    Function to plot a histogram of scores for employers
+
+    INPUT:
+        arr: Array-like, scores
+        title: String, title for plot
+
+    OUTPUT: Histogram plot (saved in directory)
+    '''
+    fig = plt.figure(figsize=(8, 6))
+    ax = fig.add_subplot(111)
+    ax.set_title(title)
+    ax.set_xlabel('Score')
+    ax.set_ylabel('Observations')
+    ax.hist(arr, bins=(len(arr) / 180))
+    plt.tight_layout()
+    plt.savefig('images/{}.png'.format(title.replace(' ', '_').lower()))
+    return
+
+
+def plot_segmented_hist(arr_middle, arr_tails):
+    '''
+    Function to plot a histogram of scores, color coded tails to visualize
+    sections of employers to be analyzed
+
+    INPUT:
+        arr_middle: Array-like, scores of employers not being analyzed
+        (middle 90%)
+        arr_tails: Array-like, scores of employers to be analyzed (>95%, <5%)
+
+    OUTPUT: Histogram plot (saved in directory)
+    '''
+
+    fig = plt.figure(figsize=(8, 6))
+    ax = fig.add_subplot(111)
+    ax.set_title('Employers with Significant Scores')
+    ax.set_xlabel('Score')
+    ax.set_ylabel('Observations')
+    ax.hist(arr_middle, bins=34, label='Middle 90%')
+    ax.hist(arr_tails, bins=34, label='Outer 5% Tails')
+    plt.legend(loc='best')
+    plt.tight_layout()
+    plt.savefig('images/sig_scores.png')
 
 
 if __name__ == '__main__':
