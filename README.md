@@ -27,7 +27,7 @@ Once I identified which employers were good candidates for analysis, I needed to
 ###### *Challenges*
 Building a scraper to parse through each page for each employer and grab the relevant information was relatively straightforward; however, I did run into one major roadblock:
 
-<figure align="center">
-  <img src="images/captcha_example.png">
-  <figcaption><b>THE DREADED CAPTCHA</b></figcaption>
-</figure>
+<p align="center">
+  <img src="images/captcha_example.png"><br />
+  <b>THE DREADED CAPTCHA</b>
+</p>
