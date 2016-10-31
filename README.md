@@ -31,3 +31,7 @@ Building a scraper to parse through each page for each employer and grab the rel
   <img src="images/captcha_example.png"><br />
   <b>THE DREADED CAPTCHA</b>
 </p>
+
+I attempted many workarounds to allow me to automatically solve CAPTCHA images, but to no avail. The most promising package out there is `tesseract` and its python integration `pytesseract`. Given more time to work on this project, I would spend more time training tesseract to solve this problem.
+
+The solution I implemented was a pause in my scraper that would wait for me to manually solve the captcha in the Selenium browser, and once I had done that, resume the scrape. Since I only encountered these challenge images every 15 minutes or so, it made sense just to babysit the process until I had collected all the data I needed.
