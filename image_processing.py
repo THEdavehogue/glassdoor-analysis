@@ -15,39 +15,65 @@
 #      manipulation for scr.im specific captchas
 #
 
-from PIL import Image
+from PIL import Image, ImageEnhance, ImageFilter, ImageOps
+from pytesseract import image_to_string
+import os
 
-img = Image.open('captchas/captcha.png')
-img = img.convert("RGBA")
 
-pixdata = img.load()
+def solve_captcha(path, i=0):
+    img = Image.open(path)
+    img = img.convert("RGBA")
 
-# Make the letters bolder for easier recognition
+    pixdata = img.load()
 
-for y in xrange(img.size[1]):
- for x in xrange(img.size[0]):
- if pixdata[x, y][0] < 90:
- pixdata[x, y] = (0, 0, 0, 255)
+    # Make the letters bolder for easier recognition
 
-for y in xrange(img.size[1]):
- for x in xrange(img.size[0]):
- if pixdata[x, y][1] < 136:
- pixdata[x, y] = (0, 0, 0, 255)
+    for y in xrange(img.size[1]):
+        for x in xrange(img.size[0]):
+            if pixdata[x, y][0] < 90:
+                pixdata[x, y] = (0, 0, 0, 255)
 
-for y in xrange(img.size[1]):
- for x in xrange(img.size[0]):
- if pixdata[x, y][2] > 0:
- pixdata[x, y] = (255, 255, 255, 255)
+    for y in xrange(img.size[1]):
+        for x in xrange(img.size[0]):
+            if pixdata[x, y][1] < 136:
+                pixdata[x, y] = (0, 0, 0, 255)
 
-img.save("captchas/captcha_bw.png")
+    for y in xrange(img.size[1]):
+        for x in xrange(img.size[0]):
+            if pixdata[x, y][2] > 0:
+                pixdata[x, y] = (255, 255, 255, 255)
 
-#   Make the image bigger (needed for OCR)
-im_orig = Image.open('captchas/captcha_bw') = im_orig.resize((1000, 500), Image.NEAREST)
+    img.save("captchas/captcha_bw.tif")
 
-ext = ".tif"
-big.save('captcha_tess')
+    #   Make the image bigger (needed for OCR)
+    im_orig = Image.open('captchas/captcha_bw.tif')
+    w, h = im_orig.size
+    big = im_orig.resize((w * 2, h * 2), Image.NEAREST)
 
-#   Perform OCR using tesseract-ocr library
-from tesseract import image_to_string
-image = Image.open('captcha_tess.tif')
-image_to_string(image)
+    ext = ".tif"
+    big.save('captchas/captcha_tess_{}.tif'.format(i))
+
+    #   Perform OCR using tesseract-ocr library
+    image = Image.open('captchas/captcha_tess_{}.tif'.format(i))
+    solved = image_to_string(image)
+    if solved = '':
+        image = ImageOps.invert(image)
+        solved = image_to_string(image)
+    return solved
+
+
+# def solve_captcha_2(path, i=0):
+#     im = Image.open(path) # the second one
+#     im = im.filter(ImageFilter.MedianFilter())
+#     enhancer = ImageEnhance.Contrast(im)
+#     im = enhancer.enhance(2)
+#     im = im.convert('1')
+#     im.save('captchas/captcha_tess_{}_2.tif'.format(i))
+#     text = image_to_string(Image.open('captchas/captcha_tess_{}.tif'.format(i)))
+#     return text
+
+
+if __name__ == '__main__':
+    solved = solve_captcha('captchas/captcha.tif')
+    # solved2 = solve_captcha_2(f, i)
+    print solved
