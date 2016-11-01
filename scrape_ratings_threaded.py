@@ -1,10 +1,11 @@
 import os
+import sys
 import requests
 import numpy as np
 import pandas as pd
 import threading
+import cPickle as pickle
 from time import sleep
-from multiprocessing import Pool, cpu_count
 from unidecode import unidecode
 from selenium import webdriver
 from bs4 import BeautifulSoup
@@ -22,11 +23,15 @@ def load_pkl():
     return df, split
 
 
+def load_er_ids(filepath):
+    return pickle.load(open(filepath, 'rb'))
+
+
 def glassdoor_login():
     url = 'https://www.glassdoor.com/profile/login_input.htm'
     driver = webdriver.Chrome()
     driver.get(url)
-    sleep(5)
+    sleep(1)
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
     while soup.find('h1') != None:
@@ -57,7 +62,6 @@ def glassdoor_login():
 
         sign_in = driver.find_element_by_id('signInBtn')
         sign_in.click()
-        sleep(5)
     return driver
 
 
@@ -116,7 +120,7 @@ def scrape_ratings(driver, company, pro_or_con, db_table):
 
 
 def threaded_scrape(er_ids, pro_or_con, db_table):
-    chunk_size = 5
+    chunk_size = 4
     num_chunks = len(er_ids) / chunk_size + 1
     chunks = []
     for i in range(num_chunks):
@@ -128,6 +132,7 @@ def threaded_scrape(er_ids, pro_or_con, db_table):
     for chunk in chunks:
         threads = []
         drivers = [glassdoor_login() for i in range(len(chunk))]
+        sleep(1)
         for idx, company in enumerate(chunk):
             thread = threading.Thread(target=scrape_ratings,
                                       args=(drivers[idx], company, pro_or_con, db_table))
@@ -183,15 +188,17 @@ def parse_record(rec):
 
 
 if __name__ == '__main__':
-    clean_df, split = load_pkl()
-    clean_df.sort_values('num_ratings', axis=0, inplace=True)
-    good_ers = clean_df[clean_df['overall_rating'] >= split]
-    bad_ers = clean_df[clean_df['overall_rating'] <= split]
-    good_er_ids = zip(good_ers['company_name'], good_ers['company_id'])
-    bad_er_ids = zip(bad_ers['company_name'], bad_ers['company_id'])
+    # clean_df, split = load_pkl()
+    # clean_df.sort_values('num_ratings', axis=0, inplace=True)
+    # good_ers = clean_df[clean_df['overall_rating'] >= split]
+    # bad_ers = clean_df[clean_df['overall_rating'] <= split]
+    # good_er_ids = zip(good_ers['company_name'], good_ers['company_id'])
+    # bad_er_ids = zip(bad_ers['company_name'], bad_ers['company_id'])
     db_client = MongoClient()
     db = db_client['glassdoor']
     ratings_table = db['ratings']
+    good_er_ids = load_er_ids(sys.argv[1])
+    bad_er_ids = load_er_ids(sys.argv[2])
     threaded_scrape(good_er_ids, 'pro', ratings_table)
     threaded_scrape(bad_er_ids, 'con', ratings_table)
     ratings_df = mongo_to_pandas(ratings_table)
