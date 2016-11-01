@@ -67,7 +67,7 @@ def glassdoor_login():
 
 def get_soup(driver, url):
     driver.get(url)
-    # sleep(np.random.randint(5, 11))
+    sleep(1)
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
     if soup.find('h1').text == 'Pardon Our Interruption...':
