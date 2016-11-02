@@ -16,6 +16,13 @@ PASSWORD = os.environ['GLASSDOOR_PASSWORD']
 
 
 def load_pkl():
+    '''
+    loads a pickled DataFrame with the employers to scrape ratings for.
+
+    INPUT: None
+
+    OUTPUT: DataFrame, threshold of good/bad employer ratings
+    '''
     df = pd.read_pickle('clean_employers.pkl')
     df['company_id'] = df['company_id'].astype(int)
     df['num_ratings'] = df['num_ratings'].astype(int)
@@ -24,63 +31,97 @@ def load_pkl():
 
 
 def load_er_ids(filepath):
+    '''
+    Loads a pickled list of tuples (employer name, employer id), used in
+    splitting up the workload for scraping
+
+    INPUT: filepath, location of pickled list
+
+    OUPTUT: list of employer name/id tuples
+    '''
     return pickle.load(open(filepath, 'rb'))
 
 
 def glassdoor_login():
+    '''
+    Function to create a selenium Chrome driver and login using my credentials
+
+    INPUT: None
+
+    OUTPUT: webdriver.Chrome object
+    '''
     url = 'https://www.glassdoor.com/profile/login_input.htm'
     driver = webdriver.Chrome()
+    soup = get_soup(driver, url)
+
+    user = driver.find_element_by_name('username')
+    user.click()
+    user.send_keys(USER_ID)
+
+    pwrd = driver.find_element_by_xpath('//*[@id="signInPassword"]')
+    pwrd.click()
+    pwrd.send_keys(PASSWORD)
+
+    sign_in = driver.find_element_by_id('signInBtn')
+    sign_in.click()
+    return driver
+
+
+def scrape_solve_captcha(driver, soup):
+    '''
+    Incomplete function to enter text from CAPTCHA image and click continue.
+
+    INPUT: webdriver, BeautifulSoup object
+
+    OUTPUT: None
+    '''
+    captcha = soup.find('img', id='recaptcha_challenge_image')['src']
+    img_text = requests.get(captcha).content
+    with open('captchas/captcha.tif', 'w') as f:
+        f.write(img_text)
+    path = 'captchas/captcha.tif'
+
+    #   SOLVE CAPTCHA HERE
+    # solved = solve_captcha(path)
+
+    captcha = driver.find_element_by_id('recaptcha_response_field')
+    captcha.click()
+    captcha.send_keys(solved)
+    complete = driver.find_element_by_id('dCF_input_complete')
+    complete.click()
+
+
+def get_soup(driver, url):
+    '''
+    Function to query a page in selenium driver and return the html in soup form
+
+    INPUT: selenium webdriver, url
+
+    OUTPUT: soup (BeautifulSoup)
+    '''
     driver.get(url)
     sleep(2) # wait for javascript to run
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
     while soup.find('h1') != None:
+        if soup.find('h1').text == 'Pardon Our Interruption...':
 
-        # this block of code could work if I could automate solving the captcha
+            # scrape_solve_captcha(driver, soup)
 
-        # captcha = soup.find('img', id='recaptcha_challenge_image')['src']
-        # img_text = requests.get(captcha).content
-        # with open('captchas/captcha.tif', 'w') as f:
-        #     f.write(img_text)
-        # path = 'captchas/captcha.tif'
-        # solved = solve_captcha(path)
-        # print solved
-        # captcha = driver.find_element_by_id('recaptcha_response_field')
-        # captcha.click()
-        # captcha.send_keys(solved)
-        # complete = driver.find_element_by_id('dCF_input_complete')
-        # complete.click()
-
-
-        raw_input('Press Enter after solving the CAPTCHA...')
-        html = driver.page_source
-        soup = BeautifulSoup(html, 'html.parser')
-    else:
-        user = driver.find_element_by_name('username')
-        user.click()
-        user.send_keys(USER_ID)
-
-        pwrd = driver.find_element_by_xpath('//*[@id="signInPassword"]')
-        pwrd.click()
-        pwrd.send_keys(PASSWORD)
-
-        sign_in = driver.find_element_by_id('signInBtn')
-        sign_in.click()
-    return driver
-
-
-def get_soup(driver, url):
-    driver.get(url)
-    sleep(2) # wait for javascript to run
-    html = driver.page_source
-    soup = BeautifulSoup(html, 'html.parser')
-    if soup.find('h1').text == 'Pardon Our Interruption...':
-        raw_input('Press Enter after solving the CAPTCHA...')
-        soup = get_soup(driver, url)
+            raw_input('Press Enter after solving the CAPTCHA...')
+            soup = get_soup(driver, url)
     return soup
 
 
 def parse_page(c_id, c_name, soup, pro_or_con):
+    '''
+    Function to scrape reviews from page and return list of records for MongoDB
+
+    INPUT: c_id: company_id, c_name: company_name, soup: BeautifulSoup object
+           containing review text
+
+    OUTPUT: List of dictionaries to be inserted as documents into a MongoDB
+    '''
     rows = []
     if pro_or_con == 'pro':
         idx = 2
@@ -124,6 +165,15 @@ def scrape_ratings(driver, company, pro_or_con, db_table):
 
 
 def threaded_scrape(er_ids, pro_or_con, db_table):
+    '''
+    Function to use threading to run multiple selenium browsers for scraping.
+
+    INPUT: er_ids: employer ids to scrape, pro_or_con: 'pro' or 'con', telling
+           which section of each review to scrape, db_table: pymongo collection
+           to store scraped ratings
+
+    OUTPUT: None
+    '''
     chunk_size = 6
     num_chunks = len(er_ids) / chunk_size + 1
     chunks = []
@@ -150,6 +200,14 @@ def threaded_scrape(er_ids, pro_or_con, db_table):
 
 
 def mongo_to_pandas(db_table):
+    '''
+    Function to load all records from ratings collection in MongoDB to a pandas
+    DataFrame.
+
+    INPUT: db_table: pymongo collection - scraped ratings
+
+    OUTPUT: pandas DataFrame containing all ratings in MongoDB
+    '''
     df = empty_df()
     df_2 = empty_df()
     c = db_table.find()
@@ -170,7 +228,8 @@ def mongo_to_pandas(db_table):
 
 def empty_df():
     '''
-    Function to create an empty pandas DataFrame object (used in mongo_to_pandas)
+    Function to create an empty pandas DataFrame object
+    (used in mongo_to_pandas)
 
     INPUT: None
 
@@ -184,6 +243,13 @@ def empty_df():
 
 
 def parse_record(rec):
+    '''
+    Function to parse Mongo record into a pandas Series object
+
+    INPUT: record from MongoDB
+
+    OUTPUT: pandas Series of the same data
+    '''
     row = pd.Series({'company_id': rec.get('company_id', None),
                      'company_name': rec.get('company_name', None),
                      'pro_or_con': rec.get('pro_or_con', None),
