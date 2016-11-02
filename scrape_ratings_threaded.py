@@ -31,10 +31,13 @@ def glassdoor_login():
     url = 'https://www.glassdoor.com/profile/login_input.htm'
     driver = webdriver.Chrome()
     driver.get(url)
-    sleep(1)
+    sleep(2) # wait for javascript to run
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
     while soup.find('h1') != None:
+
+        # this block of code could work if I could automate solving the captcha
+
         # captcha = soup.find('img', id='recaptcha_challenge_image')['src']
         # img_text = requests.get(captcha).content
         # with open('captchas/captcha.tif', 'w') as f:
@@ -47,10 +50,11 @@ def glassdoor_login():
         # captcha.send_keys(solved)
         # complete = driver.find_element_by_id('dCF_input_complete')
         # complete.click()
+
+
         raw_input('Press Enter after solving the CAPTCHA...')
         html = driver.page_source
         soup = BeautifulSoup(html, 'html.parser')
-        # print soup.find('img', id='recaptcha_challenge_image')
     else:
         user = driver.find_element_by_name('username')
         user.click()
@@ -67,7 +71,7 @@ def glassdoor_login():
 
 def get_soup(driver, url):
     driver.get(url)
-    sleep(1)
+    sleep(2) # wait for javascript to run
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
     if soup.find('h1').text == 'Pardon Our Interruption...':
@@ -120,7 +124,7 @@ def scrape_ratings(driver, company, pro_or_con, db_table):
 
 
 def threaded_scrape(er_ids, pro_or_con, db_table):
-    chunk_size = 4
+    chunk_size = 6
     num_chunks = len(er_ids) / chunk_size + 1
     chunks = []
     for i in range(num_chunks):
@@ -132,7 +136,7 @@ def threaded_scrape(er_ids, pro_or_con, db_table):
     for chunk in chunks:
         threads = []
         drivers = [glassdoor_login() for i in range(len(chunk))]
-        sleep(1)
+        sleep(2) # wait for javascript to run
         for idx, company in enumerate(chunk):
             thread = threading.Thread(target=scrape_ratings,
                                       args=(drivers[idx], company, pro_or_con, db_table))
@@ -188,17 +192,18 @@ def parse_record(rec):
 
 
 if __name__ == '__main__':
-    # clean_df, split = load_pkl()
-    # clean_df.sort_values('num_ratings', axis=0, inplace=True)
-    # good_ers = clean_df[clean_df['overall_rating'] >= split]
-    # bad_ers = clean_df[clean_df['overall_rating'] <= split]
-    # good_er_ids = zip(good_ers['company_name'], good_ers['company_id'])
-    # bad_er_ids = zip(bad_ers['company_name'], bad_ers['company_id'])
+    clean_df, split = load_pkl()
+    clean_df.sort_values('num_ratings', axis=0, inplace=True)
+    good_ers = clean_df[clean_df['overall_rating'] >= split]
+    bad_ers = clean_df[clean_df['overall_rating'] <= split]
+    good_er_ids = zip(good_ers['company_name'], good_ers['company_id'])
+    bad_er_ids = zip(bad_ers['company_name'], bad_ers['company_id'])
     db_client = MongoClient()
     db = db_client['glassdoor']
     ratings_table = db['ratings']
-    good_er_ids = load_er_ids(sys.argv[1])
-    bad_er_ids = load_er_ids(sys.argv[2])
+    # good_er_ids = load_er_ids(sys.argv[1])
+    # bad_er_ids = load_er_ids(sys.argv[2])
     threaded_scrape(good_er_ids, 'pro', ratings_table)
     threaded_scrape(bad_er_ids, 'con', ratings_table)
     ratings_df = mongo_to_pandas(ratings_table)
+    ratings_df.to_pickle('ratings_df.pkl')
