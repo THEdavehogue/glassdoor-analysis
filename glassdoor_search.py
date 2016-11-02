@@ -69,6 +69,13 @@ def empty_df():
 
 
 def parse_record(rec):
+    '''
+    Function to parse Mongo record into a pandas Series object
+
+    INPUT: record from MongoDB
+
+    OUTPUT: pandas Series of the same data    
+    '''
     row = pd.Series({'company_id': rec.get('id', None),
                      'company_name': rec.get('name', None),
                      'num_ratings': rec.get('numberOfRatings', None),
