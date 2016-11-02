@@ -15,7 +15,7 @@ def drop_junk(ratings_df):
     '''
     ratings_df = ratings_df[ratings_df['review_text'] != 'Pros']
     ratings_df.drop_duplicates(inplace=True)
-
+    ratings_df.reset_index(drop=True)
     return ratings_df
 
 
@@ -34,7 +34,7 @@ def combine_data(paths):
 
 
 def check_review_counts(ratings_df):
-    clean_df = pd.read_pickle('clean_employers.pkl')
+    clean_df = pd.read_pickle('data/clean_employers.pkl')
     target_ratings = clean_df[['company_name', 'company_id',
                                'num_ratings', 'overall_rating']]
     company_ratings = ratings_df['company_name'].value_counts()
@@ -53,14 +53,15 @@ def check_review_counts(ratings_df):
     bad_rescrape = rescrape[rescrape['overall_rating'] < 3.5]
     good_er_ids = zip(good_rescrape['company_name'], good_rescrape['company_id'])
     bad_er_ids = zip(bad_rescrape['company_name'], bad_rescrape['company_id'])
-    pickle.dump(good_er_ids, open('rescrape_pros.pkl', 'wb'))
-    pickle.dump(bad_er_ids, open('rescrape_cons.pkl', 'wb'))
+    pickle.dump(good_er_ids, open('data/rescrape_pros.pkl', 'wb'))
+    pickle.dump(bad_er_ids, open('data/rescrape_cons.pkl', 'wb'))
     return good_er_ids, bad_er_ids
 
 
 if __name__ == '__main__':
-    paths = ['ratings_df_1.pkl', 'ratings_df_2.pkl', 'ratings_df_3.pkl',
-             'ratings_df_4.pkl', 'ratings_df_5.pkl']
+    paths = ['data/ratings_df_1.pkl', 'data/ratings_df_2.pkl',
+             'data/ratings_df_3.pkl', 'data/ratings_df_4.pkl',
+             'data/ratings_df_5.pkl', 'data/rescrape_df.pkl']
     ratings_df = drop_junk(combine_data(paths))
     good_er_ids, bad_er_ids = check_review_counts(ratings_df)
     db_client = MongoClient()
@@ -68,5 +69,8 @@ if __name__ == '__main__':
     tab = db['ratings_rescrape']
     threaded_scrape(good_er_ids, 'pro', tab)
     threaded_scrape(bad_er_ids, 'con', tab)
-    rescrape_df = mongo_to_pandas(tab)
-    rescrape_df.to_pickle('rescrape_df.pkl')
+    if (len(good_er_ids) > 0) or (len(bad_er_ids) > 0):
+        rescrape_df = mongo_to_pandas(tab)
+        rescrape_df.to_pickle('data/rescrape_df.pkl')
+        ratings_df = drop_junk(ratings_df.append(rescrape_df))
+    ratings_df.to_pickle('data/ratings_df_all.pkl')

@@ -23,7 +23,7 @@ def load_pkl():
 
     OUTPUT: DataFrame, threshold of good/bad employer ratings
     '''
-    df = pd.read_pickle('clean_employers.pkl')
+    df = pd.read_pickle('data/clean_employers.pkl')
     df['company_id'] = df['company_id'].astype(int)
     df['num_ratings'] = df['num_ratings'].astype(int)
     split = df['overall_rating'].mean()
@@ -272,4 +272,4 @@ if __name__ == '__main__':
     threaded_scrape(good_er_ids, 'pro', ratings_table)
     threaded_scrape(bad_er_ids, 'con', ratings_table)
     ratings_df = mongo_to_pandas(ratings_table)
-    ratings_df.to_pickle('ratings_df.pkl')
+    ratings_df.to_pickle('data/ratings_df.pkl')

@@ -73,6 +73,6 @@ def plot_segmented_hist(arr_middle, arr_tails):
 
 
 if __name__ == '__main__':
-    df = pd.read_pickle('employers.pkl')
+    df = pd.read_pickle('data/employers.pkl')
     clean_df = scrub_employers(df)
-    clean_df.to_pickle('clean_employers.pkl')
+    clean_df.to_pickle('data/clean_employers.pkl')

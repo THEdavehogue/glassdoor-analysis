@@ -74,7 +74,7 @@ def parse_record(rec):
 
     INPUT: record from MongoDB
 
-    OUTPUT: pandas Series of the same data    
+    OUTPUT: pandas Series of the same data
     '''
     row = pd.Series({'company_id': rec.get('id', None),
                      'company_name': rec.get('name', None),
@@ -144,4 +144,4 @@ if __name__ == '__main__':
                                                            emp_table.count())
 
     employers_df = mongo_to_pandas(emp_table)
-    employers_df.to_pickle('employers.pkl')
+    employers_df.to_pickle('data/employers.pkl')
