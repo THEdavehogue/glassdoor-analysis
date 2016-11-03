@@ -149,7 +149,7 @@ def scrape_ratings(driver, company, pro_or_con, db_coll):
     '''
     num_ratings = {}
     name, c_id = company
-    name = unidecode(name)
+    name = unidecode(name).replace(' ', '-')
     url = 'https://www.glassdoor.com/Reviews/{}-Reviews-E{}.htm?filter.defaultEmploymentStatuses=false&filter.defaultLocation=false&filter.resetFilters=true'.format(name, c_id)
     soup = get_soup(driver, url)
     ratings = int(soup.findChild('h2').text.split()[0].replace(',', ''))
