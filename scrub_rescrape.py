@@ -45,7 +45,7 @@ def drop_junk(ratings_df):
     '''
     ratings_df = ratings_df[ratings_df['review_text'] != 'Pros']
     ratings_df.drop_duplicates(inplace=True)
-    ratings_df.reset_index(drop=True)
+    ratings_df.reset_index(inplace=True, drop=True)
     return ratings_df
 
 
