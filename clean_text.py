@@ -33,7 +33,7 @@ def clean_text(reviews):
 def run_tfidf(lemm_column):
 
     STOPLIST = set(["n't", "'s", "'m", "ca", "'", "'re", "i've", 'poor',
-                    'worst', 'place', 'make', 'thing', 'hour',
+                    'worst', 'place', 'make', 'thing', 'hour', 'low', 'high',
                     'good', 'great', 'awesome', 'excellent', 'job', 'best',
                     'bad', 'terrible', 'horrible', 'company', 'employee'] +
                     list(ENGLISH_STOP_WORDS))
