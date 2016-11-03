@@ -7,7 +7,7 @@ from scrape_ratings_threaded import threaded_scrape, mongo_to_pandas
 
 def drop_junk(ratings_df):
     '''
-    Function to get rid of junk reviews.
+    Function to get rid of junk reviews
 
     INPUT: pandas DataFrame (combined with all rating data)
 
@@ -21,7 +21,7 @@ def drop_junk(ratings_df):
 
 def combine_data(paths):
     '''
-    Function to combine dataframes from pickled form.
+    Function to combine dataframes from pickled form
 
     INPUT: Iterable of filepaths for pickled DataFrames
 
@@ -34,6 +34,14 @@ def combine_data(paths):
 
 
 def check_review_counts(ratings_df):
+    '''
+    Function to check that enough data was collected. Compares number of reviews
+    for each target employer with the number of reviews collected
+
+    INPUT: ratings_df: Pandas DataFrame containing scraped review text
+
+    OUTPUT: good_er_ids, bad_er_ids: Lists of tuples to rescrape from glassdoor
+    '''
     clean_df = pd.read_pickle('data/clean_employers.pkl')
     target_ratings = clean_df[['company_name', 'company_id',
                                'num_ratings', 'overall_rating']]
