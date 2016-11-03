@@ -99,44 +99,44 @@ def mongo_to_pandas(db_coll):
 
     OUTPUT: pandas DataFrame object
     '''
-    df = empty_df()
-    df_2 = empty_df()
-    c = db_coll.find()
-    lst = list(c)
-    i = 0
+    df=empty_df()
+    df_2=empty_df()
+    c=db_coll.find()
+    lst=list(c)
+    i=0
     for rec in lst:
         i += 1
         if i % 2500 == 0:
-            df = df.append(df_2)
-            df_2 = empty_df()
+            df=df.append(df_2)
+            df_2=empty_df()
         print 'Row {} of {}'.format(i, len(lst))
-        row = parse_record(rec)
-        df_2 = df_2.append(row, ignore_index=True)
-    df = df.append(df_2)
-    df['company_id'] = df['company_id'].astype(int)
-    df['overall_rating'] = df['overall_rating'].astype(float)
-    df['culture_rating'] = df['culture_rating'].astype(float)
-    df['comp_rating'] = df['comp_rating'].astype(float)
-    df['opportunity_rating'] = df['opportunity_rating'].astype(float)
-    df['leader_rating'] = df['leader_rating'].astype(float)
-    df['work_life_rating'] = df['work_life_rating'].astype(float)
-    df['num_ratings'] = df['num_ratings'].astype(int)
+        row=parse_record(rec)
+        df_2=df_2.append(row, ignore_index = True)
+    df=df.append(df_2)
+    df['company_id']=df['company_id'].astype(int)
+    df['overall_rating']=df['overall_rating'].astype(float)
+    df['culture_rating']=df['culture_rating'].astype(float)
+    df['comp_rating']=df['comp_rating'].astype(float)
+    df['opportunity_rating']=df['opportunity_rating'].astype(float)
+    df['leader_rating']=df['leader_rating'].astype(float)
+    df['work_life_rating']=df['work_life_rating'].astype(float)
+    df['num_ratings']=df['num_ratings'].astype(int)
     return df
 
 
 if __name__ == '__main__':
-    init_search = glassdoor_search()
-    num_pages = init_search['response']['totalNumberOfPages']
+    init_search=glassdoor_search()
+    num_pages=init_search['response']['totalNumberOfPages']
 
-    db_client = MongoClient()
-    db = db_client['glassdoor']
-    emp_coll = db['employers']
+    db_client=MongoClient()
+    db=db_client['glassdoor']
+    emp_coll=db['employers']
 
     for i in xrange(num_pages):
-        page = glassdoor_search('employers', i + 1)
-        counter = 1
+        page=glassdoor_search('employers', i + 1)
+        counter=1
         while not page['success'] and counter < 5:
-            page = glassdoor_search('employers', i + 1)
+            page=glassdoor_search('employers', i + 1)
             counter += 1
         else:
             emp_coll.insert_many(page['response']['employers'])
@@ -144,5 +144,5 @@ if __name__ == '__main__':
     print 'Loaded {} of {} pages, {} records . . .'.format(i + 1, num_pages,
                                                            emp_coll.count())
 
-    employers_df = mongo_to_pandas(emp_coll)
+    employers_df=mongo_to_pandas(emp_coll)
     employers_df.to_pickle(os.path.join('data', 'employers.pkl'))

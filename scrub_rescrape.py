@@ -14,7 +14,8 @@ def load_filepaths():
 
     OUTPUT: List of filepaths
     '''
-    paths = [os.path.join('data','ratings_df_{}.pkl'.format(i+1)) for i in range(5)]
+    paths = [os.path.join('data', 'ratings_df_{}.pkl'.format(i + 1))
+             for i in range(5)]
     if os.path.exists(os.path.join('data', 'rescrape_df.pkl')):
         paths.append(os.path.join('data', 'rescrape_df.pkl'))
     return paths
@@ -88,7 +89,8 @@ def check_review_counts(ratings_df):
     rescrape = check_df[check_df['delta_pct'] > 0.5]
     good_rescrape = rescrape[rescrape['overall_rating'] > 3.5]
     bad_rescrape = rescrape[rescrape['overall_rating'] < 3.5]
-    good_er_ids = zip(good_rescrape['company_name'], good_rescrape['company_id'])
+    good_er_ids = zip(good_rescrape['company_name'],
+                      good_rescrape['company_id'])
     bad_er_ids = zip(bad_rescrape['company_name'], bad_rescrape['company_id'])
     pickle.dump(good_er_ids,
                 open(os.path.join('data', 'rescrape_pros.pkl'), 'wb'))

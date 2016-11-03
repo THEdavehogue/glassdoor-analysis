@@ -100,7 +100,7 @@ def get_soup(driver, url):
     OUTPUT: soup (BeautifulSoup)
     '''
     driver.get(url)
-    sleep(2) # wait for javascript to run
+    sleep(2)  # wait for javascript to run
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
     while soup.find('h1') != None:
@@ -187,7 +187,7 @@ def threaded_scrape(er_ids, pro_or_con, db_coll):
     for chunk in chunks:
         threads = []
         drivers = [glassdoor_login() for i in range(len(chunk))]
-        sleep(2) # wait for javascript to run
+        sleep(2)  # wait for javascript to run
         for idx, company in enumerate(chunk):
             thread = threading.Thread(target=scrape_ratings,
                                       args=(drivers[idx], company, pro_or_con, db_coll))
