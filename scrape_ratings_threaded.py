@@ -138,10 +138,10 @@ def parse_page(c_id, c_name, soup, pro_or_con):
     return rows
 
 
-def scrape_ratings(driver, company, pro_or_con, db_table):
+def scrape_ratings(driver, company, pro_or_con, db_coll):
     '''
-    Scrape ratings for target companies. Insert text from 'Pros' into pros table.
-    Insert text from 'Cons' into cons table.
+    Scrape ratings for target companies. Insert text from 'Pros' into pros collection.
+    Insert text from 'Cons' into cons collection.
 
     INPUT: Iterable of employer name/id combinations.
 
@@ -156,20 +156,20 @@ def scrape_ratings(driver, company, pro_or_con, db_table):
     pages = ratings / len(p1_reviews) + 1
     num_ratings[name] = ratings
     rows = parse_page(c_id, name, soup, pro_or_con)
-    db_table.insert_many(rows)
+    db_coll.insert_many(rows)
     for i in xrange(1, pages):
         url = 'https://www.glassdoor.com/Reviews/{}-Reviews-E{}_P{}.htm?filter.defaultEmploymentStatuses=false&filter.defaultLocation=false&filter.resetFilters=true'.format(name, c_id, i + 1)
         soup = get_soup(driver, url)
         rows = parse_page(c_id, name, soup, pro_or_con)
-        db_table.insert_many(rows)
+        db_coll.insert_many(rows)
 
 
-def threaded_scrape(er_ids, pro_or_con, db_table):
+def threaded_scrape(er_ids, pro_or_con, db_coll):
     '''
     Function to use threading to run multiple selenium browsers for scraping.
 
     INPUT: er_ids: employer ids to scrape, pro_or_con: 'pro' or 'con', telling
-           which section of each review to scrape, db_table: pymongo collection
+           which section of each review to scrape, db_coll: pymongo collection
            to store scraped ratings
 
     OUTPUT: None
@@ -189,7 +189,7 @@ def threaded_scrape(er_ids, pro_or_con, db_table):
         sleep(2) # wait for javascript to run
         for idx, company in enumerate(chunk):
             thread = threading.Thread(target=scrape_ratings,
-                                      args=(drivers[idx], company, pro_or_con, db_table))
+                                      args=(drivers[idx], company, pro_or_con, db_coll))
             threads.append(thread)
         for thread in threads:
             thread.start()
@@ -199,18 +199,18 @@ def threaded_scrape(er_ids, pro_or_con, db_table):
             driver.close()
 
 
-def mongo_to_pandas(db_table):
+def mongo_to_pandas(db_coll):
     '''
     Function to load all records from ratings collection in MongoDB to a pandas
     DataFrame.
 
-    INPUT: db_table: pymongo collection - scraped ratings
+    INPUT: db_coll: pymongo collection - scraped ratings
 
     OUTPUT: pandas DataFrame containing all ratings in MongoDB
     '''
     df = empty_df()
     df_2 = empty_df()
-    c = db_table.find()
+    c = db_coll.find()
     lst = list(c)
     i = 0
     for rec in lst:
@@ -266,10 +266,10 @@ if __name__ == '__main__':
     bad_er_ids = zip(bad_ers['company_name'], bad_ers['company_id'])
     db_client = MongoClient()
     db = db_client['glassdoor']
-    ratings_table = db['ratings']
+    ratings_coll = db['ratings']
     # good_er_ids = load_er_ids(sys.argv[1])
     # bad_er_ids = load_er_ids(sys.argv[2])
-    threaded_scrape(good_er_ids, 'pro', ratings_table)
-    threaded_scrape(bad_er_ids, 'con', ratings_table)
-    ratings_df = mongo_to_pandas(ratings_table)
+    threaded_scrape(good_er_ids, 'pro', ratings_coll)
+    threaded_scrape(bad_er_ids, 'con', ratings_coll)
+    ratings_df = mongo_to_pandas(ratings_coll)
     ratings_df.to_pickle('data/ratings_df.pkl')

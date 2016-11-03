@@ -90,9 +90,10 @@ def parse_record(rec):
     return row
 
 
-def mongo_to_pandas(db_table):
+def mongo_to_pandas(db_coll):
     '''
-    Function to pull key information from a mongo table into a pandas DataFrame
+    Function to pull key information from a mongo collection into a
+    pandas DataFrame
 
     INPUT: pymongo collection object
 
@@ -100,7 +101,7 @@ def mongo_to_pandas(db_table):
     '''
     df = empty_df()
     df_2 = empty_df()
-    c = db_table.find()
+    c = db_coll.find()
     lst = list(c)
     i = 0
     for rec in lst:
@@ -129,7 +130,7 @@ if __name__ == '__main__':
 
     db_client = MongoClient()
     db = db_client['glassdoor']
-    emp_table = db['employers']
+    emp_coll = db['employers']
 
     for i in xrange(num_pages):
         page = glassdoor_search('employers', i + 1)
@@ -138,10 +139,10 @@ if __name__ == '__main__':
             page = glassdoor_search('employers', i + 1)
             counter += 1
         else:
-            emp_table.insert_many(page['response']['employers'])
+            emp_coll.insert_many(page['response']['employers'])
         if (i + 1) % 25 == 0:
     print 'Loaded {} of {} pages, {} records . . .'.format(i + 1, num_pages,
-                                                           emp_table.count())
+                                                           emp_coll.count())
 
-    employers_df = mongo_to_pandas(emp_table)
+    employers_df = mongo_to_pandas(emp_coll)
     employers_df.to_pickle('data/employers.pkl')

@@ -1,8 +1,37 @@
+import os
 import numpy as np
 import pandas as pd
 import cPickle as pickle
 from pymongo import MongoClient
 from scrape_ratings_threaded import threaded_scrape, mongo_to_pandas
+
+
+def load_filepaths():
+    '''
+    Function to load in data that has previously been pickled and stored
+
+    INPUT: None
+
+    OUTPUT: List of filepaths
+    '''
+    paths = [os.path.join('data','ratings_df_{}.pkl'.format(i+1)) for i in range(5)]
+    if os.path.exists(os.path.join('data', 'rescrape_df.pkl')):
+        paths.append(os.path.join('data', 'rescrape_df.pkl'))
+    return paths
+
+
+def init_mongo(coll_name):
+    '''
+    Function to initialize pymongo db connection.
+
+    INPUT: coll_name: string, name of mongo collection to connect
+
+    OUTPUT: pymongo collection object
+    '''
+    client = MongoClient()
+    db = client['glassdoor']
+    coll = db[coll_name]
+    return coll
 
 
 def drop_junk(ratings_df):
@@ -66,19 +95,29 @@ def check_review_counts(ratings_df):
     return good_er_ids, bad_er_ids
 
 
-if __name__ == '__main__':
-    paths = ['data/ratings_df_1.pkl', 'data/ratings_df_2.pkl',
-             'data/ratings_df_3.pkl', 'data/ratings_df_4.pkl',
-             'data/ratings_df_5.pkl', 'data/rescrape_df.pkl']
-    ratings_df = drop_junk(combine_data(paths))
-    good_er_ids, bad_er_ids = check_review_counts(ratings_df)
-    db_client = MongoClient()
-    db = db_client['glassdoor']
-    tab = db['ratings_rescrape']
-    threaded_scrape(good_er_ids, 'pro', tab)
-    threaded_scrape(bad_er_ids, 'con', tab)
+def rescrape(ratings_df, good_er_ids, bad_er_ids):
+    '''
+    Function to go back and scrape stuff that we missed the first time
+
+    INPUT: original pandas DataFrame containing all review text; good_er_ids,
+           bad_er_ids from check_review_counts. Employers that need to be
+           rescraped
+
+    OUTPUT: new pandas DataFrame with rescraped reviews added and scrubbed
+    '''
     if (len(good_er_ids) > 0) or (len(bad_er_ids) > 0):
-        rescrape_df = mongo_to_pandas(tab)
+        threaded_scrape(good_er_ids, 'pro', coll)
+        threaded_scrape(bad_er_ids, 'con', coll)
+        rescrape_df = mongo_to_pandas(coll)
         rescrape_df.to_pickle('data/rescrape_df.pkl')
         ratings_df = drop_junk(ratings_df.append(rescrape_df))
+    return ratings_df
+
+
+if __name__ == '__main__':
+    paths = load_filepaths()
+    ratings_df = drop_junk(combine_data(paths))
+    coll = init_mongo('ratings_rescrape')
+    good_er_ids, bad_er_ids = check_review_counts(ratings_df)
+    ratings_df = rescrape(ratings_df, good_er_ids, bad_er_ids)
     ratings_df.to_pickle('data/ratings_df_all.pkl')
