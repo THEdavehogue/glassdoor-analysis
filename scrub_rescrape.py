@@ -71,7 +71,7 @@ def check_review_counts(ratings_df):
 
     OUTPUT: good_er_ids, bad_er_ids: Lists of tuples to rescrape from glassdoor
     '''
-    clean_df = pd.read_pickle('data/clean_employers.pkl')
+    clean_df = pd.read_pickle(os.path.join('data', 'clean_employers.pkl'))
     target_ratings = clean_df[['company_name', 'company_id',
                                'num_ratings', 'overall_rating']]
     company_ratings = ratings_df['company_name'].value_counts()
@@ -90,18 +90,21 @@ def check_review_counts(ratings_df):
     bad_rescrape = rescrape[rescrape['overall_rating'] < 3.5]
     good_er_ids = zip(good_rescrape['company_name'], good_rescrape['company_id'])
     bad_er_ids = zip(bad_rescrape['company_name'], bad_rescrape['company_id'])
-    pickle.dump(good_er_ids, open('data/rescrape_pros.pkl', 'wb'))
-    pickle.dump(bad_er_ids, open('data/rescrape_cons.pkl', 'wb'))
+    pickle.dump(good_er_ids,
+                open(os.path.join('data', 'rescrape_pros.pkl'), 'wb'))
+    pickle.dump(bad_er_ids,
+                open(os.path.join('data', 'rescrape_cons.pkl'), 'wb'))
     return good_er_ids, bad_er_ids
 
 
-def rescrape(ratings_df, good_er_ids, bad_er_ids):
+def rescrape(ratings_df, coll, good_er_ids, bad_er_ids):
     '''
     Function to go back and scrape stuff that we missed the first time
 
-    INPUT: original pandas DataFrame containing all review text; good_er_ids,
-           bad_er_ids from check_review_counts. Employers that need to be
-           rescraped
+    INPUT: ratings_df: original pandas DataFrame containing all review text,
+           coll: pymongo collection for storing new reviews,
+           good_er_ids, bad_er_ids from check_review_counts Employers that need
+           to be rescraped
 
     OUTPUT: new pandas DataFrame with rescraped reviews added and scrubbed
     '''
@@ -109,7 +112,7 @@ def rescrape(ratings_df, good_er_ids, bad_er_ids):
         threaded_scrape(good_er_ids, 'pro', coll)
         threaded_scrape(bad_er_ids, 'con', coll)
         rescrape_df = mongo_to_pandas(coll)
-        rescrape_df.to_pickle('data/rescrape_df.pkl')
+        rescrape_df.to_pickle(os.path.join('data', 'rescrape_df.pkl'))
         ratings_df = drop_junk(ratings_df.append(rescrape_df))
     return ratings_df
 
@@ -119,5 +122,5 @@ if __name__ == '__main__':
     ratings_df = drop_junk(combine_data(paths))
     coll = init_mongo('ratings_rescrape')
     good_er_ids, bad_er_ids = check_review_counts(ratings_df)
-    ratings_df = rescrape(ratings_df, good_er_ids, bad_er_ids)
-    ratings_df.to_pickle('data/ratings_df_all.pkl')
+    ratings_df = rescrape(ratings_df, coll, good_er_ids, bad_er_ids)
+    ratings_df.to_pickle(os.path.join('data', 'ratings_df_all.pkl'))

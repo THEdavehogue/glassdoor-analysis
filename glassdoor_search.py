@@ -145,4 +145,4 @@ if __name__ == '__main__':
                                                            emp_coll.count())
 
     employers_df = mongo_to_pandas(emp_coll)
-    employers_df.to_pickle('data/employers.pkl')
+    employers_df.to_pickle(os.path.join('data', 'employers.pkl'))
