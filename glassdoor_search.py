@@ -76,18 +76,18 @@ def parse_record(rec):
 
     OUTPUT: pandas Series of the same data
     '''
-    row = pd.Series({'company_id': rec.get('id', None),
-                     'company_name': rec.get('name', None),
-                     'num_ratings': rec.get('numberOfRatings', None),
-                     'overall_rating': rec.get('overallRating', None),
-                     'recommend_pct': rec.get('recommendToFriendRating', None),
-                     'culture_rating': rec.get('cultureAndValuesRating', None),
-                     'comp_rating': rec.get('compensationAndBenefitsRating', None),
-                     'opportunity_rating': rec.get('careerOpportunitiesRating', None),
-                     'leader_rating': rec.get('seniorLeadershipRating', None),
-                     'work_life_rating': rec.get('workLifeBalanceRating', None),
-                     'industry': rec.get('industryName', None)})
-    return row
+    row = {'company_id': rec.get('id', None),
+           'company_name': rec.get('name', None),
+           'num_ratings': rec.get('numberOfRatings', None),
+           'overall_rating': rec.get('overallRating', None),
+           'recommend_pct': rec.get('recommendToFriendRating', None),
+           'culture_rating': rec.get('cultureAndValuesRating', None),
+           'comp_rating': rec.get('compensationAndBenefitsRating', None),
+           'opportunity_rating': rec.get('careerOpportunitiesRating', None),
+           'leader_rating': rec.get('seniorLeadershipRating', None),
+           'work_life_rating': rec.get('workLifeBalanceRating', None),
+           'industry': rec.get('industryName', None)})
+    return pd.Series(row)
 
 
 def mongo_to_pandas(db_coll):
