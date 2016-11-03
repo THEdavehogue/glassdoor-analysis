@@ -1,4 +1,5 @@
-#Capstone Project: Analyzing Employer Trends
+#Analyzing Employer Trends
+######Data Science Immersive Capstone Project
 ___
 ## Overview:
 The goal of this project is to analyze topics in Glassdoor's employee reviews, in order to understand what employees like and dislike about their employers. To answer this question, I will need to accomplish a few things:
