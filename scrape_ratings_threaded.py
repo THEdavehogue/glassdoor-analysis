@@ -6,6 +6,7 @@ import pandas as pd
 import threading
 import cPickle as pickle
 from time import sleep
+from progressbar import ProgressBar
 from unidecode import unidecode
 from selenium import webdriver
 from bs4 import BeautifulSoup
@@ -213,13 +214,13 @@ def mongo_to_pandas(db_coll):
     df_2 = empty_df()
     c = db_coll.find()
     lst = list(c)
+    pbar = ProgressBar()
     i = 0
-    for rec in lst:
+    for rec in pbar(lst):
         i += 1
         if i % 2500 == 0:
             df = df.append(df_2)
             df_2 = empty_df()
-        print 'Row {} of {}'.format(i, len(lst))
         row = parse_record(rec)
         df_2 = df_2.append(row, ignore_index=True)
     df = df.append(df_2)
