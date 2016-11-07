@@ -3,15 +3,24 @@ import sys
 import numpy as np
 import pandas as pd
 import spacy
-from clean_text import stop_words
 from sklearn.decomposition import NMF
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS
 
 
+def stop_words():
+    STOPLIST = set(["n't", "'s", "'m", "ca", "'", "'re", "i've", 'poor', '-',
+                    'worst', 'place', 'make', 'thing', 'hour', 'low', 'high',
+                    'good', 'great', 'awesome', 'excellent', 'job', 'best',
+                    'work', 'amazing', 'suck',
+                    'bad', 'terrible', 'horrible', 'company', 'employee'] +
+                    list(ENGLISH_STOP_WORDS))
+    return STOPLIST
+
+
 class NMFCluster(object):
 
-    def __init__(self, num_topics, tfidf_max_features=10000, tfidf_max_df=0.75, tfidf_min_df=50, nmf_alpha=0.1, nmf_l1_ratio=0.25, random_state=None):
+    def __init__(self, num_topics, tfidf_max_features=5000, tfidf_max_df=0.9, tfidf_min_df=1000, nmf_alpha=0.1, nmf_l1_ratio=0.25, random_state=None):
         self.num_topics = int(num_topics)
         self.tfidf_max_features = tfidf_max_features
         self.tfidf_max_df = tfidf_max_df
@@ -86,7 +95,10 @@ class NMFCluster(object):
 if __name__ == '__main__':
     ratings_df = pd.read_pickle(sys.argv[1])
 
-    nmf = NMFCluster(25)
+    topics = 10
+    nmf = NMFCluster(topics)
     nmf.fit_nmf(ratings_df)
 
-    nmf.print_topic_summary(ratings_df, 0)
+    for i in range(topics):
+        nmf.print_topic_summary(ratings_df, i)
+        print ''
