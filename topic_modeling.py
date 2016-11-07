@@ -3,9 +3,13 @@ import sys
 import numpy as np
 import pandas as pd
 import spacy
+import matplotlib.pyplot as plt
+from PIL import Image
+from wordcloud import WordCloud
 from sklearn.decomposition import NMF
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS
+plt.style.use('ggplot')
 
 
 def stop_words():
@@ -83,13 +87,35 @@ class NMFCluster(object):
         return zip(self.tfidf_features, frequencies)
 
 
+    def plot_topic(self, topic_idx):
+        word_freq = self.topic_word_frequency(topic_idx)
+        wc = WordCloud(background_color='white')
+        wc.fit_words(word_freq)
+        fig = plt.figure(figsize=(12,6))
+        ax = fig.add_subplot(111)
+        ax.set_title('Topic {}'.format(topic_idx))
+        ax.axis('off')
+        ax.imshow(wc)
+        plt.imshow(wc)
+        plt.show()
+
+
+    def visualize_topics(self, df):
+        for i in range(self.num_topics):
+            self.print_topic_summary(df, i)
+            print ''
+            self.plot_topic(i)
+
+
 if __name__ == '__main__':
-    ratings_df = pd.read_pickle(sys.argv[1])
+    pros_df = pd.read_pickle(os.path.join('data', 'pros_df.pkl'))
+    cons_df = pd.read_pickle(os.path.join('data', 'cons_df.pkl'))
 
     topics = 10
-    nmf = NMFCluster(topics)
-    nmf.fit_nmf(ratings_df)
+    nmf_pros = NMFCluster(topics)
+    nmf_cons = NMFCluster(topics)
+    nmf_pros.fit_nmf(pros_df)
+    nmf_cons.fit_nmf(cons_df)
 
-    for i in range(topics):
-        nmf.print_topic_summary(ratings_df, i)
-        print ''
+    nmf_pros.visualize_topics(pros_df)
+    nmf_cons.visualize_topics(cons_df)
