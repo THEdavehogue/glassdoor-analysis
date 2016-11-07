@@ -71,15 +71,6 @@ class NMFCluster(object):
         print self.top_words_by_topic(num_words, topic_num)
         if not num_reviews:
             return None
-        # reviews_by_source = [float(len(df.loc[(self.labels[:, topic_num]) & (df['source'] == outlet)])) / num_articles for outlet in zip(*self.outlets)[0]]
-        # print 'Breakdown by source:'
-        # print '\t'.join(['{0}: {1:.2f}%'.format(outlet, percent*100) for outlet, percent in zip(zip(*self.outlets)[1], articles_by_source)])
-        #
-        # normalized = [percent / len(df.loc[df['source'] == outlet]) for outlet, percent in zip(zip(*self.outlets)[0], articles_by_source)]
-        # normalized = [percent / np.sum(normalized) for percent in normalized]
-        #
-        # print 'Breakdown normalized by number of articles published by source:'
-        # print '\t'.join(['{0}: {1:.2f}%'.format(outlet, percent*100) for outlet, percent in zip(zip(*self.outlets)[1], normalized)])
 
 
     def topic_word_frequency(self, topic_idx):
