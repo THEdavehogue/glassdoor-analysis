@@ -31,12 +31,12 @@ For my web scraper, the primary packages that I utilized were `BeautifulSoup` an
 
 ####Cleaning the Data
 
-######Stop Words
+#####Stop Words
 
 The first step in analyzing text is removing [stop words](https://en.wikipedia.org/wiki/Stop_words). In a nutshell, stop words are common words that help to create sentence structure, but do not add any meaning to the idea that a sentence is trying to convey. For example, stop words in the sentence preceding this one would be:
 
-- <b>Stop words</b>: In, a, are, that, to, but, do, any, to, the, that, a, is, to
-- <b>Meaningful words</b>: nutshell, stop, words, common, words, help, create, sentence, structure, not, add, meaning, idea, sentence, trying, convey
+- <b>Stop words</b>: *In, a, are, that, to, but, do, any, to, the, that, a, is, to*
+- <b>Meaningful words</b>: *nutshell, stop, words, common, words, help, create, sentence, structure, not, add, meaning, idea, sentence, trying, convey*
 
 You may notice that a few words are repeated in the above summary. This is important for our TF-IDF matrix which will help us to cluster different topics and the most frequent words within each topic.
 
