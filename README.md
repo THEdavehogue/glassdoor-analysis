@@ -35,8 +35,8 @@ For my web scraper, the primary packages that I utilized were `BeautifulSoup` an
 
 The first step in analyzing text is removing [stop words](https://en.wikipedia.org/wiki/Stop_words). In a nutshell, stop words are common words that help to create sentence structure, but do not add any meaning to the idea that a sentence is trying to convey. For example, stop words in the sentence preceding this one would be:
 
-- Stop words: In, a, are, that, to, but, do, any, to, the, that, a, is, to
-- Meaningful words: nutshell, stop, words, common, words, help, create, sentence, structure, not, add, meaning, idea, sentence, trying, convey
+- <b>Stop words</b>: In, a, are, that, to, but, do, any, to, the, that, a, is, to
+- <b>Meaningful words</b>: nutshell, stop, words, common, words, help, create, sentence, structure, not, add, meaning, idea, sentence, trying, convey
 
 You may notice that a few words are repeated in the above summary. This is important for our TF-IDF matrix which will help us to cluster different topics and the most frequent words within each topic.
 
@@ -45,6 +45,8 @@ You may notice that a few words are repeated in the above summary. This is impor
 After removing stop words from the corpus, the next step is [stemming](https://en.wikipedia.org/wiki/Stemming) or [lemmatizing](https://en.wikipedia.org/wiki/Lemmatisation) the text. Stemming involves removing endings from words to reduce each word to its stem (i.e. "working" is reduced to "work"). Lemmatization goes a step further, and reduces each word to its morphological root, or `lemma`, taking tense and other linguistic nuance into account (i.e. "is", "am", "are" become "be"). Lemmatization can be computationally more expensive, but it typically yields better results. I implemented a lemmatization algorithm using [spaCy](https://spacy.io) for this project.
 
 ######Part of Speech Tagging
+
+Part of speech tagging is another important step in Natural Language Processing. It allows for the inclusion or exclusion of certain parts of speech (e.g. articles, conjunctions) if they are not excluded in the removal of stop words.
 
 ######A brief look at n-grams
 
