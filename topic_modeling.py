@@ -24,7 +24,8 @@ def stop_words():
 
 class NMFCluster(object):
 
-    def __init__(self, num_topics, tfidf_max_features=5000, tfidf_max_df=0.9, tfidf_min_df=1000, nmf_alpha=0.1, nmf_l1_ratio=0.25, random_state=None):
+    def __init__(self, pro_or_con, num_topics, tfidf_max_features=5000, tfidf_max_df=0.9, tfidf_min_df=1000, nmf_alpha=0.1, nmf_l1_ratio=0.25, random_state=None):
+        self.pro_or_con = pro_or_con
         self.num_topics = int(num_topics)
         self.tfidf_max_features = tfidf_max_features
         self.tfidf_max_df = tfidf_max_df
@@ -93,18 +94,16 @@ class NMFCluster(object):
         wc.fit_words(word_freq)
         fig = plt.figure(figsize=(12,6))
         ax = fig.add_subplot(111)
-        ax.set_title('Topic {}'.format(topic_idx))
         ax.axis('off')
         ax.imshow(wc)
-        plt.imshow(wc)
         plt.show()
 
 
     def visualize_topics(self, df):
         for i in range(self.num_topics):
             self.print_topic_summary(df, i)
-            print ''
             self.plot_topic(i)
+            print ''
 
 
 if __name__ == '__main__':
@@ -112,8 +111,8 @@ if __name__ == '__main__':
     cons_df = pd.read_pickle(os.path.join('data', 'cons_df.pkl'))
 
     topics = 10
-    nmf_pros = NMFCluster(topics)
-    nmf_cons = NMFCluster(topics)
+    nmf_pros = NMFCluster('pro', topics, random_state=42)
+    nmf_cons = NMFCluster('con', topics, random_state=42)
     nmf_pros.fit_nmf(pros_df)
     nmf_cons.fit_nmf(cons_df)
 
