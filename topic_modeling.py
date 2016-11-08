@@ -5,26 +5,16 @@ import pandas as pd
 import spacy
 import matplotlib.pyplot as plt
 from PIL import Image
+from clean_text import STOPLIST
 from wordcloud import WordCloud
 from sklearn.decomposition import NMF
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS
 plt.style.use('ggplot')
-
-
-def stop_words():
-    STOPLIST = set(["n't", "'s", "'m", "ca", "'", "'re", "i've", 'poor', '-',
-                    'worst', 'place', 'make', 'thing', 'hour', 'low', 'high',
-                    'good', 'great', 'awesome', 'excellent', 'job', 'best',
-                    'work', 'amazing', 'suck',
-                    'bad', 'terrible', 'horrible', 'company', 'employee'] +
-                    list(ENGLISH_STOP_WORDS))
-    return STOPLIST
 
 
 class NMFCluster(object):
 
-    def __init__(self, pro_or_con, num_topics, tfidf_max_features=5000, tfidf_max_df=0.9, tfidf_min_df=1000, nmf_alpha=0.1, nmf_l1_ratio=0.25, random_state=None):
+    def __init__(self, pro_or_con, num_topics, tfidf_max_features=10000, tfidf_max_df=0.95, tfidf_min_df=1000, nmf_alpha=.1, nmf_l1_ratio=0.25, random_state=None):
         self.pro_or_con = pro_or_con
         self.num_topics = int(num_topics)
         self.tfidf_max_features = tfidf_max_features
@@ -33,7 +23,7 @@ class NMFCluster(object):
         self.nmf_alpha = nmf_alpha
         self.nmf_l1_ratio = nmf_l1_ratio
         self.random_state = random_state
-        self.stop_words = stop_words()
+        self.stop_words = STOPLIST
 
 
     def fit_nmf(self, df):
@@ -42,7 +32,7 @@ class NMFCluster(object):
         self.W_matrix = self.nmf.transform(self.tfidf_matrix)
         sums = self.W_matrix.sum(axis=1)
         self.W_pct = self.W_matrix / sums[:, None]
-        self.labels = self.W_pct >= 0.05
+        self.labels = self.W_pct >= 0.20
 
 
     def fit_tfidf(self, df):
@@ -90,9 +80,9 @@ class NMFCluster(object):
 
     def plot_topic(self, topic_idx):
         word_freq = self.topic_word_frequency(topic_idx)
-        wc = WordCloud(background_color='white')
+        wc = WordCloud(width=2000, height=1000, max_words=150, background_color='white')
         wc.fit_words(word_freq)
-        fig = plt.figure(figsize=(12,6))
+        fig = plt.figure(figsize=(16,8))
         ax = fig.add_subplot(111)
         ax.axis('off')
         ax.imshow(wc)
@@ -116,7 +106,7 @@ if __name__ == '__main__':
     pros_df = pd.read_pickle(os.path.join('data', 'pros_df.pkl'))
     cons_df = pd.read_pickle(os.path.join('data', 'cons_df.pkl'))
 
-    nmf_pros = NMFCluster('pro', 10, random_state=42)
+    nmf_pros = NMFCluster('pro', 25, random_state=42)
     nmf_cons = NMFCluster('con', 10, random_state=42)
     nmf_pros.fit_nmf(pros_df)
     nmf_cons.fit_nmf(cons_df)
