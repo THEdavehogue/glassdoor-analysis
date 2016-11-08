@@ -1,4 +1,4 @@
-# Analyzing Employee Happiness
+# Analyzing Employee Satisfaction
 #### Data Science Immersive Capstone Project
 ___
 ## Overview:
@@ -7,9 +7,13 @@ The goal of this project is to analyze topics in Glassdoor's employee reviews, i
 - Collect employee review data for each of the employers that I have identified as a target for analysis.
 - Analyze a corpus of employee feedback using Natural Language Processing techniques. Identify latent topics and their relative importances using Non-Negative Matrix Factorization.
 
+<p align="center">
+  <img src="images/positive/topic_5.png">
+</p>
+
 ___
-### Gathering Data
-In order to choose which employers to focus on for this analysis, I utilized Glassdoor's Employers API to pull all the employers in their database. In order to gather a large enough corpus of reviews, I chose to focus on companies with at least 100 reviews.
+## Gathering Data
+In order to choose which employers to focus on for this analysis, I utilized the Glassdoor Employers API to query all the employers in their database. In order to gather a large enough corpus of reviews, I chose to focus on companies with at least 100 reviews.
 
 <p align="center">
   <img src="images/employers_with_at_least_100_reviews.png">
@@ -26,32 +30,40 @@ ___
 Once I identified which employers were good candidates for analysis, I needed to gather all the reviews for each company. Specifically, the "Pros" for each highly rated company as well as the "Cons" for each poorly rated company. Since Glassdoor does not have an API through which I could download reviews, it became a web scraping problem.
 
 #### Web Scraping
-
 For my web scraper, the primary packages that I utilized were `BeautifulSoup` and `selenium`. Since users are required to provide credentials to access all of Glassdoor's reviews, I used selenium to navigate to the login page and enter a set of credentials before scraping any reviews. I also took advantage of multithreading for boosting performance. This allowed multiple browsers to run at once and load multiple pages simultaneously. I also split the workload manually between several machines. More on this in the `Challenges` section later.
 
-#### Cleaning the Data
+#### Scrubbing the Data
+In any Natural Language Processing analysis, cleaning up the raw data is essential to
 
 ##### *Stop Words*
-
 Before I could really analyze the text of the corpus, I needed to remove [stop words](https://en.wikipedia.org/wiki/Stop_words). In a nutshell, stop words are common words that help to create sentence structure, but do not add any meaning to the idea that a sentence is trying to convey. For example, stop words in the sentence preceding this one would be:
 
-- <b>Stop words</b>: *In, a, are, that, to, but, do, any, to, the, that, a, is, to*
-- <b>Meaningful words</b>: *nutshell, stop, words, common, words, help, create, sentence, structure, not, add, meaning, idea, sentence, trying, convey*
+- Stop words: *In, a, are, that, to, but, do, any, to, the, that, a, is, to*
+- Meaningful words: *nutshell, stop, words, common, words, help, create, sentence, structure, not, add, meaning, idea, sentence, trying, convey*
 
-You may notice that a few words are repeated in the above summary. This is important for our TF-IDF matrix which will help us to cluster different topics and the most frequent words within each topic.
+You may notice that a few words are repeated in the above summary. This is important for our TF-IDF matrix (discussed later) which will help us to cluster different topics and the most frequent words within each topic.
 
 ##### *Stemming/Lemmatization**
-
 After removing stop words from the corpus, the next step is [stemming](https://en.wikipedia.org/wiki/Stemming) or [lemmatizing](https://en.wikipedia.org/wiki/Lemmatisation) the text. Stemming involves removing endings from words to reduce each word to its stem (i.e. "working" is reduced to "work"). Lemmatization goes a step further, and reduces each word to its morphological root, or `lemma`, taking tense and other linguistic nuance into account (i.e. "is", "am", "are" become "be"). Lemmatization can be computationally more expensive, but it typically yields better results. I implemented a lemmatization algorithm using [spaCy](https://spacy.io) for this project.
 
 ##### *Part of Speech Tagging*
-
 Part of speech tagging is another important step in Natural Language Processing. It allows for the inclusion or exclusion of certain parts of speech (e.g. articles, conjunctions) if they are not excluded in the removal of stop words. Part of speech tagging also helps in lemmatizing the corpus. Many words can be more than one part of speech. For example, take the word `work`. As a noun, "I have work to do." As a verb, "I work for Galvanize."
 
-##### *A brief look at n-grams*
+##### *N-grams*
+One last step in successfully capturing ideas from the corpus of text is allowing for [n-grams](https://en.wikipedia.org/wiki/N-gram). N-grams are essentially sequential groups of words that communicate a different idea together than they do apart. A good example of an n-gram is `New England Patriots`. Together, the three words clearly allude to the NFL team. Apart, the words `New`, `England`, and `Patriots` communicate their own distinct ideas. In the context of this project, I did not discover any n-grams that were prevalent across the corpus.
+
+___
+## Analyzing the Corpus
+
+#### TF-IDF Matrix
+This is where the fun starts. How can we quantify and cluster topics when we only have text data? We can begin by creating a [Term Frequency](https://en.wikipedia.org/wiki/Document-term_matrix) matrix. In this approach, Each document (for this project, each review) is a row in our matrix, and each column represents the count of a word in each document. This approach is only limited by the potential difference in document length. If one user writes a review that is 400 words long and another writes a review that is 20 words long, the term frequency weights can be easily skewed by the longer article.
+
+This problem is offset by the [Inverse Document Frequency](https://en.wikipedia.org/wiki/Tf%E2%80%93idf). Each value in our Term Frequency matrix is multiplied by its corresponding Inverse Document Frequency. The Inverse Document Frequency is a statistic that is calculated by taking the total number of documents in the corpus and dividing by the number of documents which contain that particular word, then taking the logarithm of the result. This serves to weight each word by how much information it provides. In a less mathematical sense, the more documents in which a word appears in the corpus, the less important that word will be in our analysis.
+
+#### Topic Modeling
 
 
-
+___
 #### Challenges
 The biggest overall challenge in this project was by far the data collection. Glassdoor is quite sophisticated in their bot detection, which makes it difficult to do any sort of scraping on their site. I ran into roadblocks in both phases of my data collection.
 
