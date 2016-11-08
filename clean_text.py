@@ -2,18 +2,16 @@ import os
 import pandas as pd
 import spacy
 from multiprocessing import Pool, cpu_count
-from progressbar import ProgressBar
 from string import punctuation
 from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS
 STOPLIST = set(["n't", "'s", "'m", "ca", "'", "'re", "i've", 'poor', '-',
                 'worst', 'place', 'make', 'thing', 'hour', 'low', 'high',
-                'good', 'great', 'awesome', 'excellent', 'job', 'best',
+                'good', 'great', 'awesome', 'excellent', 'job', 'best', 'wonderful', 'awful',
                 'work', 'amazing', 'suck',
                 'bad', 'terrible', 'horrible', 'company', 'employee'] +
                 list(ENGLISH_STOP_WORDS))
 KEEP_POS = {'ADJ','ADP','ADV','AUX','NOUN','VERB'}
 nlp = spacy.load('en')
-print 'NLP module loaded!'
 
 
 def clean_text(reviews):
@@ -25,7 +23,6 @@ def clean_text(reviews):
     OUTPUT: pandas DataFrame column with cleaned texts
     '''
     lemmatized = []
-    pbar = ProgressBar()
     cpus = cpu_count() - 1
     pool = Pool(processes=cpus)
     lemmatized = pool.map(lemmatize_text, reviews)
@@ -36,12 +33,13 @@ def lemmatize_text(text, stop_words=STOPLIST, keep_pos=KEEP_POS):
     STOPLIST = set(["n't", "'s", "'m", "ca", "'", "'re", "i've", 'poor', '-',
                     'worst', 'place', 'make', 'thing', 'hour', 'low', 'high',
                     'good', 'great', 'awesome', 'excellent', 'job', 'best',
-                    'work', 'amazing', 'suck', 'bos', 'decent',
+                    'work', 'amazing', 'suck', 'decent', 'lot', 'time',
                     'bad', 'terrible', 'horrible', 'company', 'employee'] +
                     list(ENGLISH_STOP_WORDS))
     KEEP_POS = {'ADJ','ADP','ADV','AUX','NOUN','VERB','X','PROPN'}
     x = nlp(text)
     words = [tok.lemma_.strip(punctuation) for tok in x if (tok.pos_ in keep_pos) and (tok.lemma_ not in STOPLIST)]
+    words.extend(['boss' for tok in x if tok.lemma_ == 'bos'])
     return ' '.join(words)
 
 
