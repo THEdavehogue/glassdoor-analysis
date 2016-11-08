@@ -96,6 +96,12 @@ class NMFCluster(object):
         ax = fig.add_subplot(111)
         ax.axis('off')
         ax.imshow(wc)
+        name = 'topic_' + str(topic_idx) + '.png'
+        if self.pro_or_con == 'pro':
+            img_path = os.path.join('images', 'positive')
+        else:
+            img_path = os.path.join('images', 'negative')
+        plt.savefig(os.path.join(img_path, name))
         plt.show()
 
 
@@ -110,9 +116,8 @@ if __name__ == '__main__':
     pros_df = pd.read_pickle(os.path.join('data', 'pros_df.pkl'))
     cons_df = pd.read_pickle(os.path.join('data', 'cons_df.pkl'))
 
-    topics = 10
-    nmf_pros = NMFCluster('pro', topics, random_state=42)
-    nmf_cons = NMFCluster('con', topics, random_state=42)
+    nmf_pros = NMFCluster('pro', 10, random_state=42)
+    nmf_cons = NMFCluster('con', 10, random_state=42)
     nmf_pros.fit_nmf(pros_df)
     nmf_cons.fit_nmf(cons_df)
 
