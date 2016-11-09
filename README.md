@@ -101,10 +101,9 @@ This is where the fun starts. How can we quantify and cluster topics when we onl
 
 This problem is offset by the [Inverse Document Frequency](https://en.wikipedia.org/wiki/Tf%E2%80%93idf). Each value in our Term Frequency matrix is multiplied by its corresponding Inverse Document Frequency. The Inverse Document Frequency is a statistic that is calculated by taking the total number of documents in the corpus and dividing by the number of documents which contain that particular word, then taking the logarithm of the result. This serves to weight each word by how much information it provides. In a less mathematical sense, the more documents in which a word appears in the corpus, the less important that word will be in our analysis.
 
-#### Topic Modeling
-I wanted to identify latent topics present in the reviews that I collected. To do this, it was important to separate the corpus into a positive corpus and a negative corpus. This was simple to do since I had labeled the data while collecting it.
+#### Topic Modeling with NMF
+I wanted to identify latent topics present in the reviews that I collected. To do this, it was important to separate the corpus into a positive corpus and a negative corpus. This was simple to do since I had labeled the data while collecting it. Once the text was separated, I clustered the reviews into topics based on latent features contained in each review.
 
-##### *Clustering*
 The clustering algorithm I chose for this corpus was [Non-Negative Matrix Factorization](https://en.wikipedia.org/wiki/Non-negative_matrix_factorization). NMF decomposes the TF-IDF matrix into two matrices to allow us to identify latent topics present in each document. Using this algorithm allows us to see multiple latent topics in each document, as opposed to other methods of clustering which would assign a document to one and only one cluster. For this corpus, I allowed each document to cluster with any topic for which the attributability was 20%. I experimented with different numbers of topics for each corpus, and the best results came from using 25 topics for positive reviews and 10 topics for negative reviews.
 ___
 ## Challenges
