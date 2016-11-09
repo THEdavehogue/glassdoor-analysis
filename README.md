@@ -1,7 +1,7 @@
 # Analyzing Employee Satisfaction
 #### Data Science Immersive Capstone Project
 ___
-## Overview:
+## Overview
 The goal of this project is to analyze topics in Glassdoor's employee reviews, in order to understand what employees like and dislike about their employers. To answer this question, I will need to accomplish a few things:
 - Identify employers that have significantly high and low scores, and that have enough reviews to collect a large corpus.
 - Collect employee review data for each of the employers that I have identified as a target for analysis.
@@ -20,7 +20,7 @@ Since the goal of this project is to identify trends in what makes an employer e
   <img src="images/sig_scores.png">
 </p>
 
-## Top 3 Positive Results:
+## Top 3 Positive Results
 
 #### *Topic 18: Challenge & Fulfillment*
 Number of Reviews in Topic: 10,249
@@ -43,7 +43,7 @@ Number of Reviews in Topic: 8,672
   <img src="images/positive/topic_1.png">
 </p>
 
-## Top 3 Negative Results:
+## Top 3 Negative Results
 
 #### *Topic 7: Opportunities*
 Number of Reviews in Topic: 11,505
@@ -86,7 +86,7 @@ Before I could really analyze the text of the corpus, I needed to remove [stop w
 
 You may notice that a few words are repeated in the above summary. This is important for our TF-IDF matrix (discussed later) which will help us to cluster different topics and the most frequent words within each topic.
 
-##### *Stemming/Lemmatization**
+##### *Stemming/Lemmatization*
 After removing stop words from the corpus, the next step is [stemming](https://en.wikipedia.org/wiki/Stemming) or [lemmatizing](https://en.wikipedia.org/wiki/Lemmatisation) the text. Stemming involves removing endings from words to reduce each word to its stem (i.e. "working" is reduced to "work"). Lemmatization goes a step further, and reduces each word to its morphological root, or `lemma`, taking tense and other linguistic nuance into account (i.e. "is", "am", "are" become "be"). Lemmatization can be computationally more expensive, but it typically yields better results. I implemented a lemmatization algorithm using [spaCy](https://spacy.io) for this project.
 
 ##### *Part of Speech Tagging*
