@@ -79,7 +79,7 @@ For my web scraper, the primary packages that I utilized were `BeautifulSoup` an
 In any Natural Language Processing analysis, cleaning up the raw data is essential to glean any meaning from the text. Without preprocessing the text, much of our analysis would be centered around different forms of the same word as well as articles and conjunctions. To get the text into its purest form for analysis, I took several steps.
 
 ##### *Stop Words*
-Before I could really analyze the text of the corpus, I needed to remove [stop words](https://en.wikipedia.org/wiki/Stop_words). In a nutshell, stop words are common words that help to create sentence structure, but do not add any meaning to the idea that a sentence is trying to convey. For example, stop words in the sentence preceding this one would be:
+The first step in cleaning up the corpus is removing [stop words](https://en.wikipedia.org/wiki/Stop_words). In a nutshell, stop words are common words that help to create sentence structure, but do not add any meaning to the idea that a sentence is trying to convey. For example, stop words in the sentence preceding this one would be:
 
 - Stop words: *In, a, are, that, to, but, do, any, to, the, that, a, is, to*
 - Meaningful words: *nutshell, stop, words, common, words, help, create, sentence, structure, not, add, meaning, idea, sentence, trying, convey*
@@ -130,3 +130,7 @@ Building a scraper to parse through each page for each employer and grab the rel
 
 ##### *Volume of Data*
 The final challenge to gathering as many reviews as I wanted was the sheer volume of data that I collected. In order to get all the reviews for all the employers that I wanted to analyze, I had to distribute the workload between five computers. After splitting the data into manageable chunks, each machine ran the threaded scraper for about 10 hours.
+
+## Acknowledgements
+
+Special thanks to [Erich Wellinger](https://github.com/ewellinger) for coaching me in this project, and for his instruction on NLP and other special topics throughout the Data Science Immersive course.
