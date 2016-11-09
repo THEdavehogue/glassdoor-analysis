@@ -1,5 +1,9 @@
-# Analyzing Employee Satisfaction
-#### Data Science Immersive Capstone Project
+<p align="center">
+  <img src="images/galvanize_logo.png">
+</p>
+
+# Data Science Immersive - Capstone Project
+#### Analyzing Employee Satisfaction - Powered By Glassdoor
 
 <p align="center">
   <img src="images/glassdoor_logo.png">
