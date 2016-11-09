@@ -135,4 +135,4 @@ Special thanks to the following people for their help with this project:
 
 <b>Erich Wellinger</b> - for his stellar instruction on NLP and other special topics throughout the Data Science Immersive course.
 
-<b>Juno Lee</b> - for help running my scrapers and collecting all of the text for this project.
+<b>Juno Lee</b> - for help managing my scrapers that collected all of the text for this project.
