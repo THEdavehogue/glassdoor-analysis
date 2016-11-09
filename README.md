@@ -6,8 +6,21 @@ The goal of this project is to analyze topics in Glassdoor's employee reviews, i
 - Identify employers that have significantly high and low scores, and that have enough reviews to collect a large corpus.
 - Collect employee review data for each of the employers that I have identified as a target for analysis.
 - Analyze a corpus of employee feedback using Natural Language Processing techniques. Identify latent topics and their relative importances using Non-Negative Matrix Factorization.
+___
+## Gathering Data
+In order to choose which employers to focus on for this analysis, I utilized the Glassdoor Employers API to query all the employers in their database. In order to gather a large enough corpus of reviews, I chose to focus on companies with at least 100 reviews.
 
-## Top 3 Positive Topics:
+<p align="center">
+  <img src="images/employers_with_at_least_100_reviews.png">
+</p>
+
+Since the goal of this project is to identify trends in what makes an employer especially great (or not so great), I chose to focus even further on companies with a score either below the 5th percentile or above the 95th percentile.
+
+<p align="center">
+  <img src="images/sig_scores.png">
+</p>
+
+## Top 3 Positive Results:
 
 #### *Topic 18: Challenge & Fulfillment*
 Number of Reviews in Topic: 10,249
@@ -30,7 +43,7 @@ Number of Reviews in Topic: 8,672
   <img src="images/positive/topic_1.png">
 </p>
 
-## Top 3 Negative Topics:
+## Top 3 Negative Results:
 
 #### *Topic 7: Opportunities*
 Number of Reviews in Topic: 11,505
@@ -54,19 +67,6 @@ Number of Reviews in Topic: 9,896
 </p>
 
 
-___
-## Gathering Data
-In order to choose which employers to focus on for this analysis, I utilized the Glassdoor Employers API to query all the employers in their database. In order to gather a large enough corpus of reviews, I chose to focus on companies with at least 100 reviews.
-
-<p align="center">
-  <img src="images/employers_with_at_least_100_reviews.png">
-</p>
-
-Since the goal of this project is to identify trends in what makes an employer especially great (or not so great), I chose to focus even further on companies with a score either below the 5th percentile or above the 95th percentile.
-
-<p align="center">
-  <img src="images/sig_scores.png">
-</p>
 
 ___
 ## Creating a Corpus
@@ -104,8 +104,10 @@ This is where the fun starts. How can we quantify and cluster topics when we onl
 This problem is offset by the [Inverse Document Frequency](https://en.wikipedia.org/wiki/Tf%E2%80%93idf). Each value in our Term Frequency matrix is multiplied by its corresponding Inverse Document Frequency. The Inverse Document Frequency is a statistic that is calculated by taking the total number of documents in the corpus and dividing by the number of documents which contain that particular word, then taking the logarithm of the result. This serves to weight each word by how much information it provides. In a less mathematical sense, the more documents in which a word appears in the corpus, the less important that word will be in our analysis.
 
 #### Topic Modeling
+I wanted to identify latent topics present in the reviews that I collected. To do this, it was important to separate the corpus into a positive corpus and a negative corpus. This was simple to do since I had labeled the data while collecting it.
 
-
+##### *Clustering*
+The clustering algorithm I chose for this corpus was [Non-Negative Matrix Factorization](https://en.wikipedia.org/wiki/Non-negative_matrix_factorization). NMF decomposes the TF-IDF matrix into two matrices to allow us to identify latent topics present in each document. Using this algorithm allows us to see multiple latent topics in each document, as opposed to other methods of clustering which would assign a document to one and only one cluster. For this corpus, I allowed each document to cluster with any topic for which the attributability was 20%. I experimented with different numbers of topics for each corpus, and the best results came from using 25 topics for positive reviews and 10 topics for negative reviews.
 ___
 #### Challenges
 The biggest overall challenge in this project was by far the data collection. Glassdoor is quite sophisticated in their bot detection, which makes it difficult to do any sort of scraping on their site. I ran into roadblocks in both phases of my data collection.
