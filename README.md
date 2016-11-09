@@ -76,7 +76,7 @@ Once I identified which employers were good candidates for analysis, I needed to
 For my web scraper, the primary packages that I utilized were `BeautifulSoup` and `selenium`. Since users are required to provide credentials to access all of Glassdoor's reviews, I used selenium to navigate to the login page and enter a set of credentials before scraping any reviews. I also took advantage of multithreading for boosting performance. This allowed multiple browsers to run at once and load multiple pages simultaneously. I also split the workload manually between several machines. More on this in the `Challenges` section later.
 
 #### Scrubbing the Data
-In any Natural Language Processing analysis, cleaning up the raw data is essential to
+In any Natural Language Processing analysis, cleaning up the raw data is essential to glean any meaning from the text. Without preprocessing the text, much of our analysis would be centered around different forms of the same word as well as articles and conjunctions. To get the text into its purest form for analysis, I took several steps.
 
 ##### *Stop Words*
 Before I could really analyze the text of the corpus, I needed to remove [stop words](https://en.wikipedia.org/wiki/Stop_words). In a nutshell, stop words are common words that help to create sentence structure, but do not add any meaning to the idea that a sentence is trying to convey. For example, stop words in the sentence preceding this one would be:
