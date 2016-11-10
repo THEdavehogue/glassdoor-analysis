@@ -28,9 +28,9 @@ Since the goal of this project is to identify trends in what makes an employer e
 
 ## Top 3 Positive Results
 <p align="center">
+  <img src="images/positive/topic_17.png">
+  <img src="images/positive/topic_19.png">
   <img src="images/positive/topic_18.png">
-  <img src="images/positive/topic_16.png">
-  <img src="images/positive/topic_1.png">
 </p>
 
 ## Top 3 Negative Results
