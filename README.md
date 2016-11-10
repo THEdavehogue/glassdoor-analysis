@@ -27,42 +27,16 @@ Since the goal of this project is to identify trends in what makes an employer e
 </p>
 
 ## Top 3 Positive Results
-
-#### *Topic 18: Challenge & Fulfillment*
-Number of Reviews in Topic: 10,249
 <p align="center">
   <img src="images/positive/topic_18.png">
-</p>
-
-#### *Topic 16: Career Development*
-Number of Reviews in Topic: 9,028
-<p align="center">
   <img src="images/positive/topic_16.png">
-</p>
-
-#### *Topic 1: Supportive Colleagues*
-Number of Reviews in Topic: 8,672
-<p align="center">
   <img src="images/positive/topic_1.png">
 </p>
 
 ## Top 3 Negative Results
-
-#### *Topic 7: Opportunities*
-Number of Reviews in Topic: 11,505
 <p align="center">
   <img src="images/negative/topic_7.png">
-</p>
-
-#### *Topic 2: Communication Issues*
-Number of Reviews in Topic: 10,559
-<p align="center">
   <img src="images/negative/topic_2.png">
-</p>
-
-#### *Topic 4: Retail Unprofessionalism*
-Number of Reviews in Topic: 9,896
-<p align="center">
   <img src="images/negative/topic_4.png">
 </p>
 
