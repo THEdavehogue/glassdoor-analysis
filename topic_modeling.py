@@ -79,11 +79,14 @@ class NMFCluster(object):
 
 
     def plot_topic(self, topic_idx):
+        title = raw_input('Enter a title for this plot: ')
+        num_reviews = self.labels[:, topic_idx].sum()
         word_freq = self.topic_word_frequency(topic_idx)
         wc = WordCloud(width=2000, height=1000, max_words=150, background_color='white')
         wc.fit_words(word_freq)
         fig = plt.figure(figsize=(16,8))
         ax = fig.add_subplot(111)
+        ax.set_title('Topic {}: {}\nNumber of Reviews in Topic: {}'.format(topic_idx, title, num_reviews))
         ax.axis('off')
         ax.imshow(wc)
         name = 'topic_' + str(topic_idx) + '.png'
