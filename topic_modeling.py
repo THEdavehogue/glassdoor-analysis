@@ -86,7 +86,7 @@ class NMFCluster(object):
         wc.fit_words(word_freq)
         fig = plt.figure(figsize=(16,8))
         ax = fig.add_subplot(111)
-        ax.set_title('Topic {}: {}\nNumber of Reviews in Topic: {}'.format(topic_idx, title, num_reviews))
+        ax.set_title('Topic {}: {}\nNumber of Reviews in Topic: {}'.format(topic_idx, title, num_reviews), fontsize=24)
         ax.axis('off')
         ax.imshow(wc)
         name = 'topic_' + str(topic_idx) + '.png'
@@ -109,7 +109,7 @@ if __name__ == '__main__':
     pros_df = pd.read_pickle(os.path.join('data', 'pros_df.pkl'))
     cons_df = pd.read_pickle(os.path.join('data', 'cons_df.pkl'))
 
-    nmf_pros = NMFCluster('pro', 25, random_state=42)
+    nmf_pros = NMFCluster('pro', 21, random_state=42)
     nmf_cons = NMFCluster('con', 10, random_state=42)
     nmf_pros.fit_nmf(pros_df)
     nmf_cons.fit_nmf(cons_df)
