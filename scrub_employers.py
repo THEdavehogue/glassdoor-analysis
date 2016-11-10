@@ -9,9 +9,11 @@ def scrub_employers(df):
     Function to refine the original collection of employers to the ones I will
     analyze later.
 
-    INPUT: df: Pandas DataFrame object.
+    INPUT:
+        df: Pandas DataFrame object.
 
-    OUTPUT: Pandas DataFrame object with only useful rows.
+    OUTPUT:
+        selected_ers: Pandas DataFrame object with only useful rows.
     '''
     mask = df['num_ratings'] >= 100
     df = df[mask]
@@ -34,7 +36,8 @@ def plot_hist(arr, title):
         arr: Array-like, scores
         title: String, title for plot
 
-    OUTPUT: Histogram plot (saved in directory)
+    OUTPUT:
+        Histogram plot (saved in directory)
     '''
     fig = plt.figure(figsize=(6, 4))
     ax = fig.add_subplot(111)
@@ -57,7 +60,8 @@ def plot_segmented_hist(arr_middle, arr_tails):
         (middle 90%)
         arr_tails: Array-like, scores of employers to be analyzed (>95%, <5%)
 
-    OUTPUT: Histogram plot (saved in directory)
+    OUTPUT:
+        Histogram plot (saved in directory)
     '''
 
     fig = plt.figure(figsize=(6, 4))

@@ -20,9 +20,12 @@ def load_pkl():
     '''
     loads a pickled DataFrame with the employers to scrape ratings for.
 
-    INPUT: None
+    INPUT:
+        None
 
-    OUTPUT: DataFrame, threshold of good/bad employer ratings
+    OUTPUT:
+        df: pandas DataFrame
+        split: threshold of good/bad employer ratings
     '''
     df = pd.read_pickle(os.path.join('data', 'clean_employers.pkl'))
     df['company_id'] = df['company_id'].astype(int)
@@ -36,9 +39,11 @@ def load_er_ids(filepath):
     Loads a pickled list of tuples (employer name, employer id), used in
     splitting up the workload for scraping
 
-    INPUT: filepath, location of pickled list
+    INPUT:
+        filepath: location of pickled list
 
-    OUPTUT: list of employer name/id tuples
+    OUPTUT:
+        list of employer name/id tuples
     '''
     return pickle.load(open(filepath, 'rb'))
 
@@ -47,9 +52,11 @@ def glassdoor_login():
     '''
     Function to create a selenium Chrome driver and login using my credentials
 
-    INPUT: None
+    INPUT:
+        None
 
-    OUTPUT: webdriver.Chrome object
+    OUTPUT:
+        webdriver.Chrome object
     '''
     url = 'https://www.glassdoor.com/profile/login_input.htm'
     driver = webdriver.Chrome()
@@ -72,9 +79,12 @@ def scrape_solve_captcha(driver, soup):
     '''
     Incomplete function to enter text from CAPTCHA image and click continue.
 
-    INPUT: webdriver, BeautifulSoup object
+    INPUT:
+        driver: webdriver
+        soup: BeautifulSoup object
 
-    OUTPUT: None
+    OUTPUT:
+        None
     '''
     captcha = soup.find('img', id='recaptcha_challenge_image')['src']
     img_text = requests.get(captcha).content
@@ -96,9 +106,12 @@ def get_soup(driver, url):
     '''
     Function to query a page in selenium driver and return the html in soup form
 
-    INPUT: selenium webdriver, url
+    INPUT:
+        driver: selenium webdriver
+        url: string, url to scrape
 
-    OUTPUT: soup (BeautifulSoup)
+    OUTPUT:
+        soup: BeautifulSoup object
     '''
     driver.get(url)
     sleep(2)  # wait for javascript to run
@@ -118,10 +131,13 @@ def parse_page(c_id, c_name, soup, pro_or_con):
     '''
     Function to scrape reviews from page and return list of records for MongoDB
 
-    INPUT: c_id: company_id, c_name: company_name, soup: BeautifulSoup object
-           containing review text
+    INPUT:
+        c_id: company_id
+        c_name: company_name
+        soup: BeautifulSoup object containing review text
 
-    OUTPUT: List of dictionaries to be inserted as documents into a MongoDB
+    OUTPUT:
+        rows: List of dictionaries to be inserted as documents into a MongoDB
     '''
     rows = []
     if pro_or_con == 'pro':
@@ -141,17 +157,23 @@ def parse_page(c_id, c_name, soup, pro_or_con):
 
 def scrape_ratings(driver, company, pro_or_con, db_coll):
     '''
-    Scrape ratings for target companies. Insert text from 'Pros' into pros collection.
-    Insert text from 'Cons' into cons collection.
+    Scrape ratings for target companies. Insert text from 'Pros' into pros
+    collection. Insert text from 'Cons' into cons collection.
 
-    INPUT: Iterable of employer name/id combinations.
+    INPUT:
+        driver: selenium webdriver
+        company: tuple, (company_name, company_id)
+        pro_or_con: string, which section to scrape
+        db_coll: pymongo collection to insert records into
 
-    OUTPUT: Pros or Cons, in a pandas DataFrame object.
+    OUTPUT:
+        Records stored in MongoDB
     '''
     num_ratings = {}
     name, c_id = company
     name = unidecode(name).replace(' ', '-')
-    url = 'https://www.glassdoor.com/Reviews/{}-Reviews-E{}.htm?filter.defaultEmploymentStatuses=false&filter.defaultLocation=false&filter.resetFilters=true'.format(name, c_id)
+    url = 'https://www.glassdoor.com/Reviews/{}-Reviews-E{}.htm?filter.defaultEmploymentStatuses=false&filter.defaultLocation=false&filter.resetFilters=true'.format(
+        name, c_id)
     soup = get_soup(driver, url)
     ratings = int(soup.findChild('h2').text.split()[0].replace(',', ''))
     p1_reviews = soup.findAll('div', class_='cell reviewBodyCell')
@@ -160,7 +182,8 @@ def scrape_ratings(driver, company, pro_or_con, db_coll):
     rows = parse_page(c_id, name, soup, pro_or_con)
     db_coll.insert_many(rows)
     for i in xrange(1, pages):
-        url = 'https://www.glassdoor.com/Reviews/{}-Reviews-E{}_P{}.htm?filter.defaultEmploymentStatuses=false&filter.defaultLocation=false&filter.resetFilters=true'.format(name, c_id, i + 1)
+        url = 'https://www.glassdoor.com/Reviews/{}-Reviews-E{}_P{}.htm?filter.defaultEmploymentStatuses=false&filter.defaultLocation=false&filter.resetFilters=true'.format(
+            name, c_id, i + 1)
         soup = get_soup(driver, url)
         rows = parse_page(c_id, name, soup, pro_or_con)
         db_coll.insert_many(rows)
@@ -170,11 +193,13 @@ def threaded_scrape(er_ids, pro_or_con, db_coll):
     '''
     Function to use threading to run multiple selenium browsers for scraping.
 
-    INPUT: er_ids: employer ids to scrape, pro_or_con: 'pro' or 'con', telling
-           which section of each review to scrape, db_coll: pymongo collection
-           to store scraped ratings
+    INPUT:
+        er_ids: employer ids to scrape
+        pro_or_con: 'pro' or 'con', which section of each review to scrape
+        db_coll: pymongo collection to store scraped ratings
 
-    OUTPUT: None
+    OUTPUT:
+        Records stored in MongoDB
     '''
     chunk_size = 6
     num_chunks = len(er_ids) / chunk_size + 1
@@ -206,9 +231,11 @@ def mongo_to_pandas(db_coll):
     Function to load all records from ratings collection in MongoDB to a pandas
     DataFrame.
 
-    INPUT: db_coll: pymongo collection - scraped ratings
+    INPUT:
+        db_coll: pymongo collection - scraped ratings
 
-    OUTPUT: pandas DataFrame containing all ratings in MongoDB
+    OUTPUT:
+        df: pandas DataFrame containing all ratings from MongoDB
     '''
     df = empty_df()
     df_2 = empty_df()
@@ -233,9 +260,11 @@ def empty_df():
     Function to create an empty pandas DataFrame object
     (used in mongo_to_pandas)
 
-    INPUT: None
+    INPUT:
+        None
 
-    OUTPUT: empty pandas DataFrame object
+    OUTPUT:
+        empty pandas DataFrame object
     '''
     df = pd.DataFrame(columns=['company_id',
                                'company_name',
@@ -248,9 +277,11 @@ def parse_record(rec):
     '''
     Function to parse Mongo record into a pandas Series object
 
-    INPUT: record from MongoDB
+    INPUT:
+        rec: record from MongoDB
 
-    OUTPUT: pandas Series of the same data
+    OUTPUT:
+        row: pandas Series of the same data
     '''
     row = pd.Series({'company_id': rec.get('company_id', None),
                      'company_name': rec.get('company_name', None),

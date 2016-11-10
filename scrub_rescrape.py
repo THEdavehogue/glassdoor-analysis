@@ -10,9 +10,11 @@ def load_filepaths():
     '''
     Function to load in data that has previously been pickled and stored
 
-    INPUT: None
+    INPUT:
+        None
 
-    OUTPUT: List of filepaths
+    OUTPUT:
+        List of filepaths
     '''
     paths = [os.path.join('data', 'ratings_df_{}.pkl'.format(i + 1))
              for i in range(5)]
@@ -25,9 +27,11 @@ def init_mongo(coll_name):
     '''
     Function to initialize pymongo db connection.
 
-    INPUT: coll_name: string, name of mongo collection to connect
+    INPUT:
+        coll_name: string, name of mongo collection to connect
 
-    OUTPUT: pymongo collection object
+    OUTPUT:
+        pymongo collection object
     '''
     client = MongoClient()
     db = client['glassdoor']
@@ -39,9 +43,11 @@ def drop_junk(ratings_df):
     '''
     Function to get rid of junk reviews
 
-    INPUT: pandas DataFrame (combined with all rating data)
+    INPUT:
+        ratings_df: pandas DataFrame (combined with all rating data)
 
-    OUTPUT: pandas DataFrame, free of garbage
+    OUTPUT:
+        ratings_df: pandas DataFrame, free of garbage
     '''
     ratings_df = ratings_df[ratings_df['review_text'] != 'Pros']
     ratings_df.drop_duplicates(inplace=True)
@@ -53,9 +59,11 @@ def combine_data(paths):
     '''
     Function to combine dataframes from pickled form
 
-    INPUT: Iterable of filepaths for pickled DataFrames
+    INPUT:
+        paths: Iterable of filepaths for pickled DataFrames
 
-    OUTPUT: Single pandas DataFrame with all ratings
+    OUTPUT:
+        ratings_df: Single pandas DataFrame with all ratings
     '''
     ratings_df = pd.read_pickle(paths[0])
     for path in paths[1:]:
@@ -68,9 +76,11 @@ def check_review_counts(ratings_df):
     Function to check that enough data was collected. Compares number of reviews
     for each target employer with the number of reviews collected
 
-    INPUT: ratings_df: Pandas DataFrame containing scraped review text
+    INPUT:
+        ratings_df: Pandas DataFrame containing scraped review text
 
-    OUTPUT: good_er_ids, bad_er_ids: Lists of tuples to rescrape from glassdoor
+    OUTPUT:
+        good_er_ids, bad_er_ids: Lists of tuples to rescrape from glassdoor
     '''
     clean_df = pd.read_pickle(os.path.join('data', 'clean_employers.pkl'))
     target_ratings = clean_df[['company_name', 'company_id',
@@ -103,12 +113,14 @@ def rescrape(ratings_df, coll, good_er_ids, bad_er_ids):
     '''
     Function to go back and scrape stuff that we missed the first time
 
-    INPUT: ratings_df: original pandas DataFrame containing all review text,
-           coll: pymongo collection for storing new reviews,
-           good_er_ids, bad_er_ids from check_review_counts Employers that need
-           to be rescraped
+    INPUT:
+        ratings_df: original pandas DataFrame containing all review text,
+        coll: pymongo collection for storing new reviews,
+        good_er_ids: employer tuples for rescraping "pros"
+        bad_er_ids: employer tuples for rescraping "cons"
 
-    OUTPUT: new pandas DataFrame with rescraped reviews added and scrubbed
+    OUTPUT:
+        ratings_df: pandas DataFrame with rescraped reviews added and scrubbed
     '''
     if (len(good_er_ids) > 0) or (len(bad_er_ids) > 0):
         threaded_scrape(good_er_ids, 'pro', coll)
