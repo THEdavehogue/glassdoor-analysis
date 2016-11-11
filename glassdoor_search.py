@@ -42,12 +42,9 @@ def glassdoor_search(action='employers', page=1):
             params['pn'])
     response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
     if response.status_code != 200:
-        print 'Error {}: {}'.format(response.status_code, response.reason)
-        print '30 Second timeout . . .'
-        sleep(30)
+        sleep(15)
         data = glassdoor_search(action, page)
     else:
-        print 'Page {} Success . . .'.format(page)
         data = json.loads(response.text)
     return data
 
@@ -156,6 +153,7 @@ def mongo_to_pandas(db_coll):
     lst = list(c)
     i = 0
     pbar = ProgressBar()
+    print 'Loading DataFrame from MongoDB . . .'
     for rec in pbar(lst):
         i += 1
         if i % 2500 == 0:
