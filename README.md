@@ -113,6 +113,21 @@ The final challenge to gathering as many reviews as I wanted was the sheer volum
 
 <b>NOTE:</b> Data is available in pickle format upon <a href="mailto:thedavehogue@gmail.com">request</a>, if you are so inclined as to run any of these scripts yourself.
 
+## Technologies Used
+- [Scikit-learn](http://scikit-learn.org/stable/)
+- [spaCy](https://spacy.io)
+- [Selenium](http://docs.seleniumhq.org/)
+- [requests](http://docs.python-requests.org/en/master/)
+- [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
+- [pymongo](https://api.mongodb.com/python/current/)
+- [matplotlib](http://matplotlib.org/)
+- [wordcloud](https://pypi.python.org/pypi/wordcloud)
+- [multiprocessing](https://docs.python.org/2/library/multiprocessing.html)
+- [threading](https://docs.python.org/2/library/threading.html#module-threading)
+- [pandas](http://pandas.pydata.org/pandas-docs/stable/)
+- [NumPy](http://www.numpy.org/)
+- [cPickle](https://pymotw.com/2/pickle/)
+
 ## Acknowledgements
 
 Special thanks to the following people for their help with this project:
