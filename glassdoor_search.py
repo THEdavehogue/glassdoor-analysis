@@ -4,6 +4,7 @@ import pandas as pd
 import socket
 import requests
 from time import sleep
+from multiprocessing import Pool, cpu_count
 from progressbar import ProgressBar
 from pymongo import MongoClient
 
@@ -46,29 +47,50 @@ def glassdoor_search(action='employers', page=1):
         sleep(30)
         data = glassdoor_search(action, page)
     else:
+        print 'Page {} Success . . .'.format(page)
         data = json.loads(response.text)
     return data
 
 
-def scrape_api(num_pages, db_coll):
+def scrape_api_page(page_num):
     '''
     Function to scrape every page of glassdoor's employers API
 
     INPUT:
-        num_pages: total number of pages to scrape
+        page_num: page number of API to scrape
 
     OUTPUT:
         None
     '''
+    page = glassdoor_search('employers', page_num)
+    counter = 1
+    while not page['success'] and counter < 5:
+        page = glassdoor_search('employers', page_num)
+        counter += 1
+    else:
+        employers = page['response']['employers']
+    return employers
+
+
+def multi_core_scrape(num_pages, db_coll):
+    '''
+    Map the API scrape across number of processors - 1 for performance boost.
+
+    INPUT:
+        num_pages: int, number of pages to scrape
+        db_coll: pymongo collection object, collection to add documents to
+
+    OUTPUT:
+        None, records inserted into MongoDB
+    '''
+    cpus = cpu_count() - 1
+    pool = Pool(processes=cpus)
+    pages = range(1, num_pages + 1)
+    employers = pool.map(scrape_api_page, pages)
+    print 'Inserting Employer Records into MongoDB . . .'
     pbar = ProgressBar()
-    for i in pbar(range(num_pages)):
-        page = glassdoor_search('employers', i + 1)
-        counter = 1
-        while not page['success'] and counter < 5:
-            page = glassdoor_search('employers', i + 1)
-            counter += 1
-        else:
-            db_coll.insert_many(page['response']['employers'])
+    for page in pbar(employers):
+        db_coll.insert_many(page)
 
 
 def empty_df():
@@ -161,7 +183,7 @@ if __name__ == '__main__':
     db = db_client['glassdoor']
     emp_coll = db['employers']
 
-    scrape_api(num_pages, emp_coll)
+    multi_core_scrape(num_pages, emp_coll)
 
     employers_df = mongo_to_pandas(emp_coll)
     employers_df.to_pickle(os.path.join('data', 'employers.pkl'))
