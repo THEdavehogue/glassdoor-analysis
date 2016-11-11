@@ -114,6 +114,8 @@ The final challenge to gathering as many reviews as I wanted was the sheer volum
 <b>NOTE:</b> Data is available in pickle format upon <a href="mailto:thedavehogue@gmail.com">request</a>, if you are so inclined as to run any of these scripts yourself.
 
 ## Technologies Used
+
+I used the following list of python packages, along with several other built-in libraries, in this Natural Language Processing project.
 - [Scikit-learn](http://scikit-learn.org/stable/)
 - [spaCy](https://spacy.io)
 - [Selenium](http://docs.seleniumhq.org/)
