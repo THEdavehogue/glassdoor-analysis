@@ -30,6 +30,8 @@ def multi_scrub_text(reviews):
     cpus = cpu_count() - 1
     pool = Pool(processes=cpus)
     lemmatized = pool.map(lemmatize_text, reviews)
+    pool.close()
+    pool.join()
     return lemmatized
 
 

@@ -84,6 +84,8 @@ def multi_core_scrape(num_pages, db_coll):
     pool = Pool(processes=cpus)
     pages = range(1, num_pages + 1)
     employers = pool.map(scrape_api_page, pages)
+    pool.close()
+    pool.join()
     print 'Inserting Employer Records into MongoDB . . .'
     pbar = ProgressBar()
     for page in pbar(employers):
