@@ -18,9 +18,9 @@ The goal of this project is to analyze topics in Glassdoor's employee reviews, i
 ## Gathering Data
 In order to choose which employers to focus on for this analysis, I utilized the Glassdoor Employers API to query all the employers in their database. Here's a quick look at the raw scores for the 560,000+ employers in Glassdoor's database:
 
-<p align="center">
+<!-- <p align="center">
   <img src="images/employers_all.png">
-</p>
+</p> -->
 
 In order to normalize the scores and gather a large enough corpus of reviews, I chose to focus on employers with at least 100 reviews.
 
