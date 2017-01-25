@@ -17,9 +17,12 @@ class NMFCluster(object):
     Class to run NMF clustering on a corpus of text
     '''
 
-    def __init__(self, pro_or_con, num_topics, tfidf_max_features=10000, tfidf_max_df=0.95, tfidf_min_df=1000, nmf_alpha=.1, nmf_l1_ratio=0.25, random_state=None):
+    def __init__(self, pro_or_con, max_topics, optimum_topics=None, tfidf_max_features=10000, tfidf_max_df=0.95, tfidf_min_df=1000, nmf_alpha=.1, nmf_l1_ratio=0.25, random_state=None):
         self.pro_or_con = pro_or_con
-        self.num_topics = int(num_topics)
+        self.max_topics = int(max_topics)
+        self.num_topics = np.arange(1, max_topics + 1)
+        self.optimum_topics = optimum_topics
+        self.reconstruction_err_array = []
         self.tfidf_max_features = tfidf_max_features
         self.tfidf_max_df = tfidf_max_df
         self.tfidf_min_df = tfidf_min_df
@@ -28,6 +31,26 @@ class NMFCluster(object):
         self.random_state = random_state
         self.stop_words = STOPLIST
 
+    def optimize_nmf(self, df):
+        self.fit_tfidf(df)
+        if not self.optimum_topics:
+            for i in self.num_topics:
+                self.nmf = NMF(n_components=i,
+                        alpha=self.nmf_alpha,
+                        l1_ratio=self.nmf_l1_ratio,
+                        random_state=self.random_state).fit(self.tfidf_matrix)
+                err = self.nmf.reconstruction_err_
+                self.reconstruction_err_array.append(err)
+                print "Topics: {}, Reconstruction Error: {}".format(i, err)
+            fig = plt.figure(figsize=(16, 8))
+            ax = fig.add_subplot(111)
+            ax.plot(self.num_topics, self.reconstruction_err_array)
+            ax.set_title("Reconstruction Error vs Number of Topics")
+            ax.set_xlabel("Number of Topics")
+            ax.set_ylabel("Reconstruction Error")
+            plt.show()
+            self.optimum_topics = int(raw_input("Desired topics from graph: "))
+
     def fit_nmf(self, df):
         '''
         Function to run NMF clustering on dataframe
@@ -35,13 +58,15 @@ class NMFCluster(object):
         INPUT:
             df: pandas Dataframe containing 'lemmatized_text' column for NMF
         '''
-        self.fit_tfidf(df)
-        self.nmf = NMF(n_components=self.num_topics, alpha=self.nmf_alpha,
+        # self.fit_tfidf(df)
+        self.optimize_nmf(df)
+        self.nmf = NMF(n_components=self.optimum_topics, alpha=self.nmf_alpha,
                        l1_ratio=self.nmf_l1_ratio, random_state=self.random_state).fit(self.tfidf_matrix)
         self.W_matrix = self.nmf.transform(self.tfidf_matrix)
         sums = self.W_matrix.sum(axis=1)
         self.W_pct = self.W_matrix / sums[:, None]
         self.labels = self.W_pct >= 0.20
+        print "Reconstruction Error: {}".format(self.nmf.reconstruction_err_)
 
     def fit_tfidf(self, df):
         '''
@@ -146,7 +171,7 @@ class NMFCluster(object):
         INPUT:
             df: pandas DataFrame (source for NMF text)
         '''
-        for i in range(self.num_topics):
+        for i in range(self.optimum_topics):
             self.print_topic_summary(df, i)
             self.plot_topic(i)
             print ''
@@ -156,10 +181,12 @@ if __name__ == '__main__':
     pros_df = pd.read_pickle(os.path.join('data', 'pros_df.pkl'))
     cons_df = pd.read_pickle(os.path.join('data', 'cons_df.pkl'))
 
-    nmf_pros = NMFCluster('pro', 21, random_state=42)
-    nmf_cons = NMFCluster('con', 10, random_state=42)
+    nmf_pros = NMFCluster('pro', max_topics=50, random_state=42)
+    nmf_cons = NMFCluster('con', max_topics=30, random_state=42)
     nmf_pros.fit_nmf(pros_df)
     nmf_cons.fit_nmf(cons_df)
 
-    nmf_pros.visualize_topics(pros_df)
-    nmf_cons.visualize_topics(cons_df)
+
+
+    #nmf_pros.visualize_topics(pros_df)
+    #nmf_cons.visualize_topics(cons_df)
