@@ -13,7 +13,7 @@ The goal of this project is to analyze topics in Glassdoor's employee reviews, i
 - Collect employee review data for each of the employers that I have identified as a target for analysis.
 - Analyze a corpus of employee feedback using Natural Language Processing techniques. Identify latent topics and their relative importances using Non-Negative Matrix Factorization.
 
-***Want to skip the minutia?*** [Click here!](#results)
+Want to skip the minutia? [Click here!](#results)
 ## Gathering Data
 In order to choose which employers to focus on for this analysis, I utilized the Glassdoor Employers API to query all the employers in their database. Here's a quick look at the raw scores for the 560,000+ employers in Glassdoor's database:
 
