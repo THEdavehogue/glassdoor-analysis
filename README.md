@@ -13,7 +13,8 @@ The goal of this project is to analyze topics in Glassdoor's employee reviews, i
 - Collect employee review data for each of the employers that I have identified as a target for analysis.
 - Analyze a corpus of employee feedback using Natural Language Processing techniques. Identify latent topics and their relative importances using Non-Negative Matrix Factorization.
 
-***Want to skip the minutia? [Click here!](#results)***
+***Want to skip to the results? [Click here!](#results)***
+
 ## Gathering Data
 In order to choose which employers to focus on for this analysis, I utilized the Glassdoor Employers API to query all the employers in their database. Here's a quick look at the raw scores for the 560,000+ employers in Glassdoor's database:
 
@@ -82,6 +83,8 @@ The clustering algorithm I chose for this corpus was [Non-Negative Matrix Factor
 </p>
 
 ## Results
+Now that you are an expert on the subject of Natural Language Processing (and you definitely didn't just skip over the minutia), let's gather some insight from our resulting topic visualizations.
+
 
 ## Top 3 Positive Results by Number of Reviews
 <p align="center">
@@ -96,6 +99,8 @@ The clustering algorithm I chose for this corpus was [Non-Negative Matrix Factor
   <img src="images/negative/topic_2.png">
   <img src="images/negative/topic_4.png">
 </p>
+
+The results above are very clear representations of the topics mentioned in positive and negative results, respectively. While this is a great tool for exploration and basic analysis, you may have noticed that the most frequently mentioned topic in both positive and negative reviews was "Growth Opportunity". I found it interesting to compare topics that appeared in both the positive and negative collections. I believe that these topics are the most important predictors of whether a company might fall within the top 5% or the bottom 5%. In short, topics that only appear in the positive corpus may be seen as a "nice to have", while the topics mentioned on both sides are "make or break". 
 
 ## Topics in Both Positive & Negative Feedback:
 
@@ -123,7 +128,7 @@ Building a scraper to parse through each page for each employer and grab the rel
   <b>THE DREADED CAPTCHA</b>
 </p>
 
-- I attempted many workarounds to allow me to automatically solve CAPTCHA images, but to no avail. The most promising package out there is [tesseract](https://github.com/tesseract-ocr/tesseract) and its python integration `pytesseract`. Given more time to work on this project, I would spend more time training tesseract to solve this problem.
+- I attempted many workarounds to allow me to automatically solve CAPTCHA images, but to no avail. The most promising package out there is [tesseract](https://github.com/tesseract-ocr/tesseract) and its python integration `pytesseract`. Given more time to work on this project, I would build integrate tesseract to solve this problem.
 
 - The solution I implemented was a pause in my scraper that would wait for me to manually solve the captcha in the selenium browsers, and once I had done that, resume the scrape. Since I only encountered these challenge images every 10 minutes or so, it made sense just to babysit the process until I had collected all the data I needed.
 
