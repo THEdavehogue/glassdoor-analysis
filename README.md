@@ -100,9 +100,11 @@ Now that you are an expert on the subject of Natural Language Processing (and yo
   <img src="images/negative/topic_4.png">
 </p>
 
-The results above are very clear representations of the topics mentioned in positive and negative results, respectively. While this is a great tool for exploration and basic analysis, you may have noticed that the most frequently mentioned topic in both positive and negative reviews was "Growth Opportunity". I found it interesting to compare topics that appeared in both the positive and negative collections. I believe that these topics are the most important predictors of whether a company might fall within the top 5% or the bottom 5%. In short, topics that only appear in the positive corpus may be seen as a "nice to have", while the topics mentioned on both sides are "make or break". 
 
 ## Topics in Both Positive & Negative Feedback:
+The results above are very clear representations of the topics mentioned in positive and negative results, respectively. While this is a great tool for exploration and basic analysis, you may have noticed that the most frequently mentioned topic in both positive and negative reviews was "Growth Opportunity". I found it interesting to compare topics that appeared in both the positive and negative collections. I believe that these topics are the most important predictors of whether a company might fall within the top 5% or the bottom 5%. In short, topics that only appear in the positive corpus may be seen as a "nice to have", while the topics mentioned on both sides are "make or break" issues.
+
+Here are some side-by-side comparisons of topics that appear in positive and negative reviews:
 
                 Positive                 |                 Negative       
 :---------------------------------------:|:------------------------------------:
