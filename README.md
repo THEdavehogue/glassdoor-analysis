@@ -34,14 +34,14 @@ Since the goal of this project is to identify trends in what makes an employer e
   <img src="images/sig_scores.png">
 </p>
 
-## Top 3 Positive Results
+## Top 3 Positive Results by Number of Reviews
 <p align="center">
   <img src="images/positive/topic_17.png">
   <img src="images/positive/topic_19.png">
   <img src="images/positive/topic_18.png">
 </p>
 
-## Top 3 Negative Results
+## Top 3 Negative Results by Number of Reviews
 <p align="center">
   <img src="images/negative/topic_7.png">
   <img src="images/negative/topic_2.png">
@@ -51,24 +51,13 @@ Since the goal of this project is to identify trends in what makes an employer e
 
 ## Topics in Both Positive & Negative Feedback:
 
-<p align="center">
-  <img src="images/positive/topic_3.png"/><img src="images/negative/topic_3.png"/>
-</p>
-
                 Positive                 |                 Negative       
 :---------------------------------------:|:------------------------------------:
+<img src="images/positive/topic_17.png"/>| <img src="images/negative/topic_7.png"/>
+<img src="images/positive/topic_9.png"/> | <img src="images/negative/topic_2.png"/>
+<img src="images/positive/topic_12.png"/>| <img src="images/negative/topic_9.png"/>
 <img src="images/positive/topic_3.png"/> | <img src="images/negative/topic_3.png"/>
 <img src="images/positive/topic_14.png"/>| <img src="images/negative/topic_5.png"/>
-<img src="images/positive/topic_9.png"/> | <img src="images/negative/topic_2.png"/>
-<img src="images/positive/topic_17.png"/>| <img src="images/negative/topic_7.png"/>
-<img src="images/positive/topic_12.png"/>| <img src="images/negative/topic_9.png"/>
-
-
-- Work Life Balance (3, 3)
-- Compensation Package (14, 5)
-- Leadership/Management (9, 2)
-- Growth Opportunity (17, 7)
-- Training Programs (CPE) (12, 9)
 
 ___
 ## Creating a Corpus
