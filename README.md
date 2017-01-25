@@ -48,6 +48,28 @@ Since the goal of this project is to identify trends in what makes an employer e
   <img src="images/negative/topic_4.png">
 </p>
 
+
+## Topics in Both Positive & Negative Feedback:
+
+<p align="center">
+  <img src="images/positive/topic_3.png"/><img src="images/negative/topic_3.png"/>
+</p>
+
+                Positive                 |                 Negative       
+:---------------------------------------:|:------------------------------------:
+<img src="images/positive/topic_3.png"/> | <img src="images/negative/topic_3.png"/>
+<img src="images/positive/topic_14.png"/>| <img src="images/negative/topic_5.png"/>
+<img src="images/positive/topic_9.png"/> | <img src="images/negative/topic_2.png"/>
+<img src="images/positive/topic_17.png"/>| <img src="images/negative/topic_7.png"/>
+<img src="images/positive/topic_12.png"/>| <img src="images/negative/topic_9.png"/>
+
+
+- Work Life Balance (3, 3)
+- Compensation Package (14, 5)
+- Leadership/Management (9, 2)
+- Growth Opportunity (17, 7)
+- Training Programs (CPE) (12, 9)
+
 ___
 ## Creating a Corpus
 Once I identified which employers were good candidates for analysis, I needed to gather all the reviews for each company. Specifically, the "Pros" for each highly rated company as well as the "Cons" for each poorly rated company. Since Glassdoor does not have an API through which I could download reviews, it became a web scraping problem.
