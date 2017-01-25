@@ -13,8 +13,7 @@ The goal of this project is to analyze topics in Glassdoor's employee reviews, i
 - Collect employee review data for each of the employers that I have identified as a target for analysis.
 - Analyze a corpus of employee feedback using Natural Language Processing techniques. Identify latent topics and their relative importances using Non-Negative Matrix Factorization.
 
-
-
+Want to skip the minutia? [Click here!](#Results)
 ## Gathering Data
 In order to choose which employers to focus on for this analysis, I utilized the Glassdoor Employers API to query all the employers in their database. Here's a quick look at the raw scores for the 560,000+ employers in Glassdoor's database:
 
@@ -33,31 +32,6 @@ Since the goal of this project is to identify trends in what makes an employer e
 <p align="center">
   <img src="images/sig_scores.png">
 </p>
-
-## Top 3 Positive Results by Number of Reviews
-<p align="center">
-  <img src="images/positive/topic_17.png">
-  <img src="images/positive/topic_19.png">
-  <img src="images/positive/topic_18.png">
-</p>
-
-## Top 3 Negative Results by Number of Reviews
-<p align="center">
-  <img src="images/negative/topic_7.png">
-  <img src="images/negative/topic_2.png">
-  <img src="images/negative/topic_4.png">
-</p>
-
-
-## Topics in Both Positive & Negative Feedback:
-
-                Positive                 |                 Negative       
-:---------------------------------------:|:------------------------------------:
-<img src="images/positive/topic_17.png"/>| <img src="images/negative/topic_7.png"/>
-<img src="images/positive/topic_9.png"/> | <img src="images/negative/topic_2.png"/>
-<img src="images/positive/topic_12.png"/>| <img src="images/negative/topic_9.png"/>
-<img src="images/positive/topic_3.png"/> | <img src="images/negative/topic_3.png"/>
-<img src="images/positive/topic_14.png"/>| <img src="images/negative/topic_5.png"/>
 
 ___
 ## Creating a Corpus
@@ -106,6 +80,32 @@ The clustering algorithm I chose for this corpus was [Non-Negative Matrix Factor
 <p align="center">
   <img src="images/NMF.png">
 </p>
+
+## Results
+
+## Top 3 Positive Results by Number of Reviews
+<p align="center">
+  <img src="images/positive/topic_17.png">
+  <img src="images/positive/topic_19.png">
+  <img src="images/positive/topic_18.png">
+</p>
+
+## Top 3 Negative Results by Number of Reviews
+<p align="center">
+  <img src="images/negative/topic_7.png">
+  <img src="images/negative/topic_2.png">
+  <img src="images/negative/topic_4.png">
+</p>
+
+## Topics in Both Positive & Negative Feedback:
+
+                Positive                 |                 Negative       
+:---------------------------------------:|:------------------------------------:
+<img src="images/positive/topic_17.png"/>| <img src="images/negative/topic_7.png"/>
+<img src="images/positive/topic_9.png"/> | <img src="images/negative/topic_2.png"/>
+<img src="images/positive/topic_12.png"/>| <img src="images/negative/topic_9.png"/>
+<img src="images/positive/topic_3.png"/> | <img src="images/negative/topic_3.png"/>
+<img src="images/positive/topic_14.png"/>| <img src="images/negative/topic_5.png"/>
 
 ___
 ## Challenges
