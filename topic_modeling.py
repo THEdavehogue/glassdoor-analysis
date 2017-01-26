@@ -7,7 +7,10 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from clean_text import STOPLIST
 from wordcloud import WordCloud
+from itertools import combinations
+from progressbar import ProgressBar
 from sklearn.decomposition import NMF
+from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 plt.style.use('ggplot')
 
@@ -17,7 +20,7 @@ class NMFCluster(object):
     Class to run NMF clustering on a corpus of text
     '''
 
-    def __init__(self, pro_or_con, max_topics, optimum_topics=None, tfidf_max_features=10000, tfidf_max_df=0.95, tfidf_min_df=1000, nmf_alpha=.1, nmf_l1_ratio=0.25, random_state=None):
+    def __init__(self, pro_or_con, max_topics, optimum_topics=None, tfidf_max_features=None, tfidf_max_df=0.9, tfidf_min_df=1000, nmf_alpha=0.1, nmf_l1_ratio=0.5, random_state=None):
         self.pro_or_con = pro_or_con
         self.max_topics = int(max_topics)
         self.num_topics = np.arange(1, max_topics + 1)
@@ -34,20 +37,44 @@ class NMFCluster(object):
     def optimize_nmf(self, df):
         self.fit_tfidf(df)
         if not self.optimum_topics:
-            for i in self.num_topics:
+            avg_cosine_sim = []
+            pbar = ProgressBar()
+            for i in pbar(self.num_topics):
+                cosine_sim = []
                 self.nmf = NMF(n_components=i,
                         alpha=self.nmf_alpha,
                         l1_ratio=self.nmf_l1_ratio,
                         random_state=self.random_state).fit(self.tfidf_matrix)
                 err = self.nmf.reconstruction_err_
+                self.H_matrix = self.nmf.components_
+                if i == 1:
+                    avg_cosine_sim.append(1)
+                else:
+                    idx_arr = np.arange(i)
+                    for combo in combinations(idx_arr, 2):
+                        vect_1 = self.H_matrix[:, int(combo[0])].reshape(-1, 1)
+                        vect_2 = self.H_matrix[:, int(combo[1])].reshape(-1, 1)
+                        sim = cosine_similarity(vect_1, vect_2)
+                        cosine_sim.append(sim)
+                    avg_cosine_sim.append(np.mean(cosine_sim))
                 self.reconstruction_err_array.append(err)
-                print "Topics: {}, Reconstruction Error: {}".format(i, err)
             fig = plt.figure(figsize=(16, 8))
-            ax = fig.add_subplot(111)
-            ax.plot(self.num_topics, self.reconstruction_err_array)
-            ax.set_title("Reconstruction Error vs Number of Topics")
-            ax.set_xlabel("Number of Topics")
-            ax.set_ylabel("Reconstruction Error")
+            ax_1 = fig.add_subplot(211)
+            ax_1.plot(self.num_topics, self.reconstruction_err_array)
+            ax_1.set_title("Reconstruction Error vs Number of Topics")
+            ax_1.set_xlabel("Number of Topics")
+            ax_1.set_ylabel("Reconstruction Error")
+            ax_2 = fig.add_subplot(212)
+            ax_2.plot(self.num_topics, avg_cosine_sim)
+            ax_2.set_title("Avg Cosine Similarity Between Topics")
+            ax_2.set_xlabel("Number of Topics")
+            ax_2.set_ylabel("Avg Cosine Similarity")
+            plt.tight_layout()
+            if self.pro_or_con == 'pro':
+                img_path = os.path.join('images', 'positive')
+            else:
+                img_path = os.path.join('images', 'negative')
+            plt.savefig(os.path.join(img_path, "nmf_metrics.png"))
             plt.show()
             self.optimum_topics = int(raw_input("Desired topics from graph: "))
 
@@ -58,7 +85,6 @@ class NMFCluster(object):
         INPUT:
             df: pandas Dataframe containing 'lemmatized_text' column for NMF
         '''
-        # self.fit_tfidf(df)
         self.optimize_nmf(df)
         self.nmf = NMF(n_components=self.optimum_topics, alpha=self.nmf_alpha,
                        l1_ratio=self.nmf_l1_ratio, random_state=self.random_state).fit(self.tfidf_matrix)
@@ -75,8 +101,12 @@ class NMFCluster(object):
         INPUT:
             df: df with 'lemmatized_text' to analyze
         '''
-        self.tfidf = TfidfVectorizer(input='content', use_idf=True, lowercase=True,
-                                     max_features=self.tfidf_max_features, max_df=self.tfidf_max_features, min_df=self.tfidf_min_df)
+        self.tfidf = TfidfVectorizer(input='content',
+                                     use_idf=True,
+                                     lowercase=True,
+                                     max_features=self.tfidf_max_features,
+                                     max_df=self.tfidf_max_df,
+                                     min_df=self.tfidf_min_df)
         self.tfidf_matrix = self.tfidf.fit_transform(
             df['lemmatized_text']).toarray()
         self.tfidf_features = np.array(self.tfidf.get_feature_names())
@@ -181,12 +211,16 @@ if __name__ == '__main__':
     pros_df = pd.read_pickle(os.path.join('data', 'pros_df.pkl'))
     cons_df = pd.read_pickle(os.path.join('data', 'cons_df.pkl'))
 
-    nmf_pros = NMFCluster('pro', max_topics=50, random_state=42)
-    nmf_cons = NMFCluster('con', max_topics=30, random_state=42)
+    nmf_pros = NMFCluster('pro',
+                          max_topics=30,
+                          optimum_topics=21, # See plots for optimum
+                          random_state=42) # Random state for reproduceability
+    nmf_cons = NMFCluster('con',
+                          max_topics=30,
+                          optimum_topics=15, # See plots for optimum
+                          random_state=42) # Random state for reproduceability
     nmf_pros.fit_nmf(pros_df)
     nmf_cons.fit_nmf(cons_df)
 
-
-
-    #nmf_pros.visualize_topics(pros_df)
-    #nmf_cons.visualize_topics(cons_df)
+    nmf_pros.visualize_topics(pros_df)
+    nmf_cons.visualize_topics(cons_df)
