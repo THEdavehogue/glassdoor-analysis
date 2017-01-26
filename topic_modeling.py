@@ -18,6 +18,9 @@ plt.style.use('ggplot')
 class NMFCluster(object):
     '''
     Class to run NMF clustering on a corpus of text
+
+    INPUT:
+        df: pandas Dataframe containing 'lemmatized_text' column for TF-IDF
     '''
 
     def __init__(self, pro_or_con, max_topics, optimum_topics=None, tfidf_max_features=None, tfidf_max_df=0.9, tfidf_min_df=1000, nmf_alpha=0.1, nmf_l1_ratio=0.5, random_state=None):
@@ -35,6 +38,12 @@ class NMFCluster(object):
         self.stop_words = STOPLIST
 
     def optimize_nmf(self, df):
+        '''
+        Function to optimize the number of topics used in NMF clustering.
+
+        INPUT:
+            df: pandas Dataframe containing 'lemmatized_text' column for TF-IDF
+        '''
         self.fit_tfidf(df)
         if not self.optimum_topics:
             avg_cosine_sim = []
@@ -83,7 +92,7 @@ class NMFCluster(object):
         Function to run NMF clustering on dataframe
 
         INPUT:
-            df: pandas Dataframe containing 'lemmatized_text' column for NMF
+            df: pandas Dataframe containing 'lemmatized_text' column for TF-IDF
         '''
         self.optimize_nmf(df)
         self.nmf = NMF(n_components=self.optimum_topics, alpha=self.nmf_alpha,
