@@ -95,8 +95,8 @@ Now that you are an expert on the subject of Natural Language Processing (and yo
 
 ## Top 3 Negative Results by Number of Reviews
 <p align="center">
-  <img src="images/negative/topic_7.png">
-  <img src="images/negative/topic_2.png">
+  <img src="images/negative/topic_0.png">
+  <img src="images/negative/topic_1.png">
   <img src="images/negative/topic_4.png">
 </p>
 
@@ -108,11 +108,11 @@ Here are some side-by-side comparisons of topics that appear in positive and neg
 
                 Positive                 |                 Negative       
 :---------------------------------------:|:------------------------------------:
-<img src="images/positive/topic_17.png"/>| <img src="images/negative/topic_7.png"/>
-<img src="images/positive/topic_9.png"/> | <img src="images/negative/topic_2.png"/>
-<img src="images/positive/topic_12.png"/>| <img src="images/negative/topic_9.png"/>
-<img src="images/positive/topic_3.png"/> | <img src="images/negative/topic_3.png"/>
-<img src="images/positive/topic_14.png"/>| <img src="images/negative/topic_5.png"/>
+<img src="images/positive/topic_17.png"/>| <img src="images/negative/topic_10.png"/>
+<img src="images/positive/topic_9.png"/> | <img src="images/negative/topic_0.png"/>
+<img src="images/positive/topic_12.png"/>| <img src="images/negative/topic_13.png"/>
+<img src="images/positive/topic_3.png"/> | <img src="images/negative/topic_9.png"/>
+<img src="images/positive/topic_14.png"/>| <img src="images/negative/topic_1.png"/>
 
 ___
 ## Challenges
