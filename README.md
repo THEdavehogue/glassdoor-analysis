@@ -76,10 +76,23 @@ This problem is offset by the [Inverse Document Frequency](https://en.wikipedia.
 #### Topic Modeling with NMF
 I wanted to identify latent topics present in the reviews that I collected. To do this, it was important to separate the corpus into a positive corpus and a negative corpus. This was simple to do since I had labeled the data while collecting it. Once the text was separated, I clustered the reviews into topics based on latent features contained in each review.
 
-The clustering algorithm I chose for this corpus was [Non-Negative Matrix Factorization](https://en.wikipedia.org/wiki/Non-negative_matrix_factorization). NMF decomposes the TF-IDF matrix into two matrices to allow us to identify latent topics present in each document. Using this algorithm allows us to see multiple latent topics in each document, as opposed to other methods of clustering which would assign a document to one and only one cluster. For this corpus, I allowed each document to cluster with any topic for which the attributability was 20%. I experimented with different numbers of topics for each corpus, and the best results came from using 25 topics for positive reviews and 10 topics for negative reviews.
+The clustering algorithm I chose for this corpus was [Non-Negative Matrix Factorization](https://en.wikipedia.org/wiki/Non-negative_matrix_factorization). NMF decomposes the TF-IDF matrix into two matrices to allow us to identify latent topics present in each document.
 
 <p align="center">
   <img src="images/NMF.png">
+</p>
+
+Using this algorithm allows us to see multiple latent topics in each document, as opposed to other methods of clustering which would assign a document to one and only one cluster. For this corpus, I allowed each document to cluster with any topic for which the attributability was 20%. In order to determine the optimum number of topics for each corpus, I plotted the reconstruction error and average cosine similarity between topics as compared to the number of topics used. I settled on 21 topics for the pros and 15 topics for the cons.
+
+
+<p align="center">
+  <b>Positive Corpus Metrics</b>
+  <img src="images/positive/nmf_metrics.png">
+</p>
+
+<p align="center">
+  <b>Negative Corpus Metrics</b>
+  <img src="images/negative/nmf_metrics.png">
 </p>
 
 ## Results
