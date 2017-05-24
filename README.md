@@ -119,8 +119,8 @@ The results above are very clear representations of the topics mentioned in posi
 
 Here are some side-by-side comparisons of topics that appear in positive and negative reviews:
 
-                Positive                 |                 Negative       
-:---------------------------------------:|:------------------------------------:
+    Positive         |       Negative       
+:-------------------:|:--------------------:
 <img src="images/positive/topic_17.png"/>| <img src="images/negative/topic_10.png"/>
 <img src="images/positive/topic_9.png"/> | <img src="images/negative/topic_0.png"/>
 <img src="images/positive/topic_14.png"/>| <img src="images/negative/topic_1.png"/>
